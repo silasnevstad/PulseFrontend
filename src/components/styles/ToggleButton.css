@@ -10,6 +10,10 @@
     display: block;
     height: calc(4px * 3 + 11px * 2);
 }
+
+.toggle:hover {
+    filter: brightness(1.3);
+}
   
 .bar {
     position: absolute;
@@ -22,11 +26,19 @@
     opacity: 1;
     transition: none 0.35s cubic-bezier(.5,-0.35,.35,1.5) 0s;
 }
+
+.bar:hover {
+    filter: brightness(1.1);
+}
   
 .bar--top {
     bottom: calc(50% + 8px + 4px/ 2);
     transition-property: bottom,transform;
     transition-delay: calc(0s + 0.35s),0s;
+}
+
+.bar--top:hover {
+    filter: brightness(1.3);
 }
   
 .bar--middle {
@@ -34,11 +46,19 @@
     transition-property: opacity;
     transition-delay: calc(0s + 0.35s);
 }
+
+.bar--middle:hover {
+    filter: brightness(1.3);
+}
   
 .bar--bottom {
     top: calc(50% + 8px + 4px/ 2);
     transition-property: top,transform;
     transition-delay: calc(0s + 0.35s),0s;
+}
+
+.bar--bottom:hover {
+    filter: brightness(1.3);
 }
   
 #checkbox:checked + .toggle .bar--top {

@@ -191,6 +191,26 @@
     color: #222;
 }
 
+@media screen and (max-width: 1024px) {
+    .small-modal {
+        width: 50vw;
+    }
+
+    .input-field-container input {
+        width: 40vw;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    .small-modal {
+        width: 50vw;
+    }
+
+    .input-field-container input {
+        width: 30vw;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .small-modal {
         width: 90vw;

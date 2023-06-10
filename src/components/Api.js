@@ -1,4 +1,3 @@
-// import { useState, useEffect } from 'react';
 const { Configuration, OpenAIApi } = require("openai");
 
 const BASE_URL = "https://morningbrief.herokuapp.com/";
@@ -153,7 +152,7 @@ const findArticleFromDescription = (news, item) => {
 }
 
 const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) => {
-    setUserApiKey(userApiKey);
+    // setUserApiKey(userApiKey);
 
     const getArticleSummary = async (item) => {
         let article;

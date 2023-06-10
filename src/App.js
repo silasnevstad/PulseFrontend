@@ -91,10 +91,13 @@ function App() {
     const user = await signIn(email, password);
 
     if (user) {
+      console.log('user: ', user);
       setUserId(user.uid);
       getApiKeyForUser(user.uid);
       setShowSignUpModal(false);
       setIsModalOpen(false);
+    } else {
+      console.log('error logging in user');
     }
   }
 
@@ -174,7 +177,7 @@ function App() {
             </svg>
           </div>}
         {showNewsModal && <NewsModal show={showNewsModal} handleClose={closeNewsModal} summary={summary} isLoading={isLoading} currentNewsItem={currentNewsItem} />}
-        {showSignUpModal && <SignUpModal show={showSignUpModal} onClose={closeSignUpModal} onSignUp={signUpUser} onLogIn={logInUser} />}
+        {showSignUpModal && <SignUpModal show={showSignUpModal} onClose={closeSignUpModal} onSignUp={signUpUser} onLogin={logInUser} />}
         {showAccountModal && <AccountModal show={showAccountModal} onClose={closeAccountModal} onLogout={logOutUser} onAddKey={setApiKeyForUser} userId={userId} userApiKey={userApiKey} userEmail={userEmail} />}
         <div className="App-top">
           <p className='App-subheader'>Browse a specific topic</p>

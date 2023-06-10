@@ -56,4 +56,5 @@ export const background_colors = {
     "automobiles": "#FF9A5B",
     "culture": "#E0A9FB",
     "video games": "#C07FF6",
+    "sci-tech": "#C2F3D6",
 }
