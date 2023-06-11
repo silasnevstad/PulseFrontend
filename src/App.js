@@ -9,6 +9,7 @@ import ToggleButton from './components/ToggleButton';
 import Api from './components/Api';
 import { onAuthStateChanged, auth, getApiKey, addApiKey, signIn, signUp, signOut } from './components/firebase';
 import { sortByCategory, getFormattedDate } from './components/utils';
+import { getBackground, getDarkerBackground } from './components/utils';
 
 function App() {
   // const [currentFreeUse, setCurrentFreeUse] = useState(0);
@@ -16,6 +17,9 @@ function App() {
   const [userId, setUserId] = useState('');
   const [userApiKey, setUserApiKey] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [currentCategory, setCurrentCategory] = useState('');
+  // const [loadingKeywords, setLoadingKeywords] = useState([]);
+  // const [currentKeyword, setCurrentKeyword] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showNewsModal, setShowNewsModal] = useState(false);
@@ -41,6 +45,7 @@ function App() {
     setIsLoading(true);
     setShowNewsModal(true);
     setIsModalOpen(true);
+    setCurrentCategory(item.category);
     const summaryResponse = await getArticleSummary(item);
     setSummary(summaryResponse);
     setIsLoading(false);
@@ -51,6 +56,7 @@ function App() {
       return;
     }
     setIsLoading(true);
+    setCurrentCategory(topic.toLowerCase());
     const update = await getTopicUpdate(topic);
     setUpdate(sortByCategory(update));
     setIsLoading(false);
@@ -58,15 +64,12 @@ function App() {
 
   useEffect(() => {
     if (!requestedRef.current) {
-      // if update is already filled, don't fetch again
       if (update.length === 0) {
         fetchUpdate();
       }
     }
   }, []);
 
-
-  // check if user is logged in
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -117,7 +120,6 @@ function App() {
       setUserApiKey(apiKey);
       closeAccountModal();
     } else {
-      // console.log(setApiKeyResponse.error);
     }
   }
 
@@ -126,7 +128,6 @@ function App() {
     if (apiKeyResponse.success) {
       setUserApiKey(apiKeyResponse.apiKey);
     } else {
-      // console.log('error getting api key: ', apiKeyResponse.error);
     }
   }
 
@@ -159,6 +160,14 @@ function App() {
     setToggleMode(!toggleMode);
   }
 
+  // useEffect(() => {
+  //   const changeKeyword = setInterval(() => {
+  //       setCurrentKeyword(loadingKeywords[Math.floor(Math.random() * loadingKeywords.length)]);
+  //   }, 2000); // change keyword every 2 seconds
+
+  //   return () => clearInterval(changeKeyword); // clear interval on component unmount
+  // }, [loadingKeywords]);
+
   return (
     <div className={`App ${isModalOpen ? '' : ''}`}>
       
@@ -172,16 +181,17 @@ function App() {
         {isLoading && 
           <div className="loading">
             <svg width="64px" height="48px">
-              <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="back"></polyline>
-              <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="front"></polyline>
+              <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="back" style={{stroke: getDarkerBackground(currentCategory)}} />
+              <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="front" style={{stroke: getBackground(currentCategory)}} />
             </svg>
+            {/* {loadingKeywords && <p className='loading-text'>Reading about {currentKeyword}...</p>} */}
           </div>}
-        {showNewsModal && <NewsModal show={showNewsModal} handleClose={closeNewsModal} summary={summary} isLoading={isLoading} currentNewsItem={currentNewsItem} />}
+        {showNewsModal && <NewsModal show={showNewsModal} handleClose={closeNewsModal} summary={summary} isLoading={isLoading} currentNewsItem={currentNewsItem} currentCategory={currentCategory} />}
         {showSignUpModal && <SignUpModal show={showSignUpModal} onClose={closeSignUpModal} onSignUp={signUpUser} onLogin={logInUser} />}
         {showAccountModal && <AccountModal show={showAccountModal} onClose={closeAccountModal} onLogout={logOutUser} onAddKey={setApiKeyForUser} userId={userId} userApiKey={userApiKey} userEmail={userEmail} />}
         <div className="App-top">
           <p className='App-subheader'>Browse a specific topic</p>
-          <NewsButtons onTopicClicked={onTopicClicked} isLoading={isLoading} fetchUpdate={fetchUpdate} />
+          <NewsButtons onTopicClicked={onTopicClicked} isLoading={isLoading} fetchUpdate={fetchUpdate} setCurrentCategory={setCurrentCategory} />
         </div>
         <div className='App-news'>
           <div className='App-date'>
@@ -190,11 +200,10 @@ function App() {
           </div>
           <div className='App-paragraph'>
             {update && sortByCategory(update).map((item, index) => {
-              return <NewsItem key={index} item={item} onClick={onNewsItemClicked} toggleMode={toggleMode} />
+              return <NewsItem key={index} item={item} onClick={onNewsItemClicked} toggleMode={toggleMode} disabled={isLoading} />
             })}
           </div>
         </div>
-        {/* {!isLoading && <input type="text" className='App-input' />} */}
       </main>
     </div>
   );

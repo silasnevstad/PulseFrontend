@@ -88,6 +88,9 @@
   max-height: 90vh;
   z-index: 100;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
   overflow-y: scroll;
   -ms-overflow-style: none;  /* IE and Edge */
@@ -97,7 +100,6 @@
 .modal-main::-webkit-scrollbar {
   display: none;
 }
-
 
 .modal-content {
   padding: 0rem 1rem;
@@ -123,9 +125,9 @@
   align-items: center;
   justify-content: center;
   padding: .9rem 1rem;
-  background-color: #FF5E5B;
+  background-color: #FF5E5Bf0;
   color: #ddd;
-  border: 1px solid #FF5E5B;
+  border: 1px solid #FF5E5Bf0;
   font-size: 1rem;
   font-weight: 300;
   width: 30px;
@@ -137,7 +139,6 @@
 .close-button:hover {
   background-color: #FF5E5B;
   transition: 0.3s ease-in-out;
-  /* transform: scale(1.1); */
   border-width: 3px;
   cursor: pointer;
   color: #fff;
@@ -172,6 +173,28 @@
   height: 20px;
 }
 
+.modal-button {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: .9rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  /* background-color: #444;
+  color: #ddd;
+  border: 1px solid #444; */
+  border: none;
+  border-radius: 50px;
+}
+
+.modal-button:hover {
+  transition: 0.3s ease-in-out;
+  transform: scale(1.05);
+  border-width: 3px;
+  cursor: pointer;
+}
+
 .modal-chat {
   padding: 0rem 1rem;
   display: flex;
@@ -182,13 +205,9 @@
 
 .modal-chat-input {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
   position: fixed;
-  bottom: 0;
+  bottom: 1rem;
   align-self: center;
-  margin-bottom: 1rem;
   background-color: #fff;
   border: 1px solid #555;
   border-radius: 10px;
@@ -503,6 +522,13 @@
   border-radius: 20px;
 }
 
+.loading-text {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #eee;
+  margin-bottom: 1rem;
+}
+
 .loading svg polyline {
   fill: none;
   stroke-width: 3;
@@ -536,7 +562,6 @@
 @media (max-width: 768px) {
   .App {
     padding: 0;
-    min-height: 0;
   }
 
   .App-header {

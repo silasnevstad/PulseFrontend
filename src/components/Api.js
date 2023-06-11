@@ -1,4 +1,8 @@
+import nlp from 'compromise';
 const { Configuration, OpenAIApi } = require("openai");
+const keyword_extractor = require("keyword-extractor");
+
+let globalAbortController = new AbortController();
 
 const BASE_URL = "https://morningbrief.herokuapp.com/";
 const DEFAULT_API_KEY = process.env.REACT_APP_OPENAI_API_KEY; // fallback api key (yours)
@@ -9,11 +13,14 @@ let configuration = new Configuration({ apiKey: userApiKey || DEFAULT_API_KEY })
 let openai = new OpenAIApi(configuration);
 
 const ENGINEERED_PROMPT = "You are going to be given a bunch of news headlines and descriptions from the last couple days to catch you up on what's going on in the world.";
-// const NEWS_PROMPT_V4 = "Using the news information you received, provide a balanced summary of key events from across the globe. Generate approximately 15 news items, each offering a concise yet informative description. Each item should be placed within square brackets [], with its category stated at the end within parentheses (). For example: [Concise news item goes here (category)]. Please avoid the use of parentheses in the news items, except for denoting the category. Aim to cover a diverse range of significant news, each item being succinct yet thorough.";
-// const NEWS_PROMPT_V5 = "Using the news information you received, generate a concise summary of prominent events worldwide. Aim to produce about 15 brief yet insightful news items. Each item should be bracketed [], with its category listed (for example technology, politics)(and only one) and url at the end within parentheses (). For instance: [Brief news item goes here (category, url)]. Parentheses should only be used for category identification within the news items. Concentrate on presenting a wide array of significant news, each item being short and to the point.";
 const NEWS_PROMPT_V6 = "Using the news you received, compile a diverse list of URLs pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc.) and its exact URL. The format should be: [category, url], [category, url], [category, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
 const SUMMARY_PROMPT_V1 = "Write a thoughtful and succinct summary of the article you just recieved. Anywhere from 3-6 sentences is ideal.";
 const QUESTION_PROMPT_V1 = "Asnwer me the following question, using the information from the recent article you just received (make sure you don't ever directly reference the article in your response, but rather use the information you learned from it as if its something you already knew): ";
+
+const cancelPreviousRequest = () => {
+    globalAbortController.abort();
+    globalAbortController = new AbortController();
+}
 
 const requestGPT = async (messages, model) => {
     let response;
@@ -21,18 +28,14 @@ const requestGPT = async (messages, model) => {
         response = await openai.createChatCompletion({
             model: model,
             messages: messages,
+            // signal: globalAbortController.signal,
         });
     } catch (error) {
-        // console.log(error);
-    }
+        console.log(error);
+        throw error;
+    }    
     
     return response['data']['choices'][0]['message']['content'];
-}
-
-const setUserApiKey = (key) => {
-    userApiKey = key;
-    configuration = new Configuration({ apiKey: userApiKey || DEFAULT_API_KEY }); // update configuration object
-    openai = new OpenAIApi(configuration); // update the OpenAIApi instance
 }
 
 const convertNewsToMessages = (news) => {
@@ -49,35 +52,6 @@ const convertArticleToSummaryMessages = (article) => {
     messages.push({'role': 'system', 'content': SUMMARY_PROMPT_V1});
     return messages;
 }
-
-// const separateNews_V5 = (news) => {
-//     let newsArray = [];
-  
-//     let regExp = /\[([^\]]+)\]/g;
-//     let newsItems = news.match(regExp);
-  
-//     if (newsItems) {
-//       newsItems.forEach((item) => {
-//         item = item.replace(/[\[\]]/g, ''); 
-//         let parts = item.split('(');
-//         let content = parts[0].trim();
-        
-//         if (parts[1]) {
-//           let categoryUrlParts = parts[1].split(',');
-//           let category = categoryUrlParts[0].trim();
-//           let url = categoryUrlParts[1] ? categoryUrlParts[1].replace(')', '').trim() : 'Unknown';
-          
-//           newsArray.push({category: category, content: content, url: url});
-//         } else {
-//           newsArray.push({category: 'Unknown', content: content, url: 'Unknown'});
-//         }
-//       });
-//     } else {
-//       console.log('No news items found in the provided string.');
-//     }
-  
-//     return newsArray;
-// }
 
 const separateNews = (news) => {
     // regex to find category and url pairs in the string
@@ -96,7 +70,6 @@ const separateNews = (news) => {
 }
 
 const makeNewsItems = (news, recentNews) => {
-    // loop through the news matching the url to the recent news, then create a new list of news items with the category and url and title and description from the recent news
     let newsItems = [];
     news.forEach((item) => {
         recentNews.forEach((recentItem) => {
@@ -151,10 +124,45 @@ const findArticleFromDescription = (news, item) => {
     return mostSimilarArticle;
 }
 
+const getKeywordsFromString = (str) => {
+    let doc = nlp(str);
+    let nouns = doc.nouns().out('array'); // extracts the nouns
+
+    // extract keywords from the nouns using keyword-extractor
+    let keywords = keyword_extractor.extract(nouns.join(' '), {
+        language: 'english',
+        remove_digits: true,
+        return_changed_case: true,
+        remove_duplicates: true
+    });
+
+    // remove numbers and punctuation
+    keywords = keywords.filter((keyword) => {
+        return !keyword.match(/^[0-9]+$/) && !keyword.match(/^[.,\/#!$%\^&\*;:{}=\-_`~()]+$/);
+    });
+
+    return keywords;
+}
+
+const getKeywords = async (news) => {
+    let keywords = [];
+
+    news.forEach((article) => {
+        let articleKeywords = getKeywordsFromString(article.description + ' ' + article.content);
+        keywords = keywords.concat(articleKeywords);
+    });
+
+    // Remove duplicates
+    keywords = [...new Set(keywords)];
+
+    return keywords;
+}
+
 const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) => {
     // setUserApiKey(userApiKey);
 
     const getArticleSummary = async (item) => {
+        cancelPreviousRequest();
         let article;
         try {
             article = findArticleFromDescription(mostRecentNews, item);
@@ -183,6 +191,7 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
     }
 
     const askFollowUp = async (item, question, summary) => {
+        cancelPreviousRequest();
         const messages = [
             {'role': 'system', 'content': "Here is a recent article: " + item.title + ': ' + item.description + ' ' + item.content + '\n' + SUMMARY_PROMPT_V1},
             {'role': 'assistant', 'content': summary},
@@ -193,16 +202,23 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
     }
 
     const getUpdate = async () => {
+        cancelPreviousRequest();
         const response = await fetch(`${BASE_URL}`);
         const data = await response.json();
         setMostRecentNews(data.news);
+        // const keywords = await getKeywords(data.news);
+        // setLoadingKeywords(keywords);
         const messages = convertNewsToMessages(data.news);
         const gpt_response = await requestGPT(messages, "gpt-3.5-turbo");
+        if (!gpt_response) {
+            return null;
+        }
         const newsItems = separateNews(gpt_response);
         return makeNewsItems(newsItems, data.news);
     }
 
     const getTopicUpdate = async (topic) => {
+        cancelPreviousRequest();
         const response = await fetch(`${BASE_URL}topic`, {
             method: 'POST',
             headers: {
@@ -212,6 +228,8 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
         });
         const data = await response.json();
         setMostRecentNews(data.news);
+        // const keywords = await getKeywords(data.news);
+        // setLoadingKeywords(keywords);
         const messages = convertNewsToMessages(data.news);
         const gpt_response = await requestGPT(messages, "gpt-3.5-turbo");
         const newsItems = separateNews(gpt_response);

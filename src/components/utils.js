@@ -4,6 +4,10 @@ export const getBackground = (category) => {
     return background_colors[category.toLowerCase()] || "#D2D2D2";
 }
 
+export const getDarkerBackground = (category) => {
+    return background_colors[category.toLowerCase()] + "30" || "#D2D2D230";
+}
+
 export const sortByCategory = (news) => {
     // Sort news grouped by category putting world news first and then alphabetically
     let sortedNews = news.sort((a, b) => {
