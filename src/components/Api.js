@@ -1,6 +1,6 @@
-import nlp from 'compromise';
+// import nlp from 'compromise';
 const { Configuration, OpenAIApi } = require("openai");
-const keyword_extractor = require("keyword-extractor");
+// const keyword_extractor = require("keyword-extractor");
 
 let globalAbortController = new AbortController();
 
@@ -124,39 +124,39 @@ const findArticleFromDescription = (news, item) => {
     return mostSimilarArticle;
 }
 
-const getKeywordsFromString = (str) => {
-    let doc = nlp(str);
-    let nouns = doc.nouns().out('array'); // extracts the nouns
+// const getKeywordsFromString = (str) => {
+//     let doc = nlp(str);
+//     let nouns = doc.nouns().out('array'); // extracts the nouns
 
-    // extract keywords from the nouns using keyword-extractor
-    let keywords = keyword_extractor.extract(nouns.join(' '), {
-        language: 'english',
-        remove_digits: true,
-        return_changed_case: true,
-        remove_duplicates: true
-    });
+//     // extract keywords from the nouns using keyword-extractor
+//     let keywords = keyword_extractor.extract(nouns.join(' '), {
+//         language: 'english',
+//         remove_digits: true,
+//         return_changed_case: true,
+//         remove_duplicates: true
+//     });
 
-    // remove numbers and punctuation
-    keywords = keywords.filter((keyword) => {
-        return !keyword.match(/^[0-9]+$/) && !keyword.match(/^[.,\/#!$%\^&\*;:{}=\-_`~()]+$/);
-    });
+//     // remove numbers and punctuation
+//     keywords = keywords.filter((keyword) => {
+//         return !keyword.match(/^[0-9]+$/) && !keyword.match(/^[.,/#!$%;:{}=\-_`~()]+$/);
+//     });
 
-    return keywords;
-}
+//     return keywords;
+// }
 
-const getKeywords = async (news) => {
-    let keywords = [];
+// const getKeywords = async (news) => {
+//     let keywords = [];
 
-    news.forEach((article) => {
-        let articleKeywords = getKeywordsFromString(article.description + ' ' + article.content);
-        keywords = keywords.concat(articleKeywords);
-    });
+//     news.forEach((article) => {
+//         let articleKeywords = getKeywordsFromString(article.description + ' ' + article.content);
+//         keywords = keywords.concat(articleKeywords);
+//     });
 
-    // Remove duplicates
-    keywords = [...new Set(keywords)];
+//     // Remove duplicates
+//     keywords = [...new Set(keywords)];
 
-    return keywords;
-}
+//     return keywords;
+// }
 
 const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) => {
     // setUserApiKey(userApiKey);

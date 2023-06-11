@@ -66,7 +66,7 @@ const NewsModal = ({ show, handleClose, summary, isLoading, currentNewsItem, cur
                         </div>
                         {/* when hovered button background and color should change to getBackground */}
                         
-                        {messages.length != 0 && <div className='modal-line'></div>}
+                        {messages.length !== 0 && <div className='modal-line'></div>}
                         <div className='modal-chat'>
                             <div className='modal-chat-content'>
                                 {messages.map((message, index) => {
