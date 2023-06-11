@@ -29,8 +29,8 @@ const AccountModal = ({ open, onClose, onLogout, onAddKey, userApiKey, userEmail
 
     return (
         <div className={`small-modal ${open ? 'open' : ''}`}>
-            <button className='small-close-button' onClick={onClose}>
-                <span style={{ fontSize: '25px', marginBottom: '15px' }}>&times;</span>
+            <button className='small-close-button' type="button" onClick={onClose}>
+                <span className="small-close-button-text">×</span>
             </button>
             <div className="small-modal-content">
                 <div className="small-modal-header">

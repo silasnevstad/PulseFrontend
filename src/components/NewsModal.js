@@ -37,7 +37,7 @@ const NewsModal = ({ show, handleClose, summary, isLoading, currentNewsItem }) =
                 </div>)
                 : (
                     <section className='modal-main'>
-                        <button className='close-button' onClick={handleClose}>x</button>
+                        <button className='close-button' type="button" onClick={handleClose}>×</button>
                         <div className='modal-content'>
                             <h1 className="modal-item-category" style={{color: getBackground(currentNewsItem.category)}}>{currentNewsItem.category[0].toUpperCase() + currentNewsItem.category.slice(1)}</h1>
                             <h2 className="modal-item-title" onClick={() => window.open(currentNewsItem.url, '_blank')}>{currentNewsItem.title}</h2>

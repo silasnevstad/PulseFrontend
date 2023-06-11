@@ -58,19 +58,34 @@
 
 .small-close-button {
     position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.2rem 0.5rem;
-    border-radius: 10px;
-    margin: 0.3rem;
-    font-size: 1.5rem;
-    font-weight: 600;
-    line-height: .8;
-    color: #fff;
+    right: 5px;
+    top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .9rem 1rem;
     background-color: #FF5E5B;
-    border: none;
+    color: #ddd;
+    border: 1px solid #FF5E5B;
+    font-size: 1rem;
+    font-weight: 300;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    transition: 0.3s ease;
+}
+
+.small-close-button-text {
+    margin-bottom: 2px;
+    margin-left: 2px;
+}
+
+.small-close-button:hover {
+    background-color: #FF5E5B;
+    transition: 0.3s ease-in-out;
+    border-width: 3px;
+    color: #fff;
     cursor: pointer;
-    transition: all 0.3s ease;
 }
 
 .bold {

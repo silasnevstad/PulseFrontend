@@ -117,21 +117,30 @@
 
 .close-button {
   position: absolute;
-  top: .8rem;
-  right: .4rem;
-  font-size: 1.3rem;
-  font-weight: 900;
-  padding: 0.2rem .6rem;
-  border-radius: 8px;
-  border: none;
-  background-color: #FF5E5B;
+  right: 5px;
+  top: 12.5px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  color: #222;
+  padding: .9rem 1rem;
+  background-color: #FF5E5B;
+  color: #ddd;
+  border: 1px solid #FF5E5B;
+  font-size: 1rem;
+  font-weight: 300;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  transition: 0.3s ease;
 }
 
 .close-button:hover {
-  background-color: #ef3734;
+  background-color: #FF5E5B;
+  transition: 0.3s ease-in-out;
+  /* transform: scale(1.1); */
+  border-width: 3px;
+  cursor: pointer;
+  color: #fff;
 }
 
 .modal-item-category {
@@ -440,7 +449,6 @@
   gap: 1rem;
   border-radius: 10px;
   background-color: #333;
-  border: 1px solid #999;
   padding: 0rem 1rem;
   color: #eee;
   overflow: hidden;
@@ -452,6 +460,13 @@
   box-shadow: 0px 4px 0px 0px #ffffff90;
 }
 
+/* when the news item is hovered also apply css to news-item-category */
+.news-item:hover .news-item-category {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 0.08em;
+}
+
 .news-item:active {
   transform: translateY(0px);
   box-shadow: 0px 1px 0px 0px #ffffff90;
@@ -460,7 +475,7 @@
 .news-item-text {
   font-size: 1.7rem;
   font-weight: 500;
-  color: #222;
+  color: #ddd;
   margin-top: -1.5rem;
   margin-bottom: 1rem;
   max-width: 100%;
