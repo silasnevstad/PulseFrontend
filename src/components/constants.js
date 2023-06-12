@@ -99,4 +99,7 @@ export const background_colors = {
     "streaming": "#C07FF6",
     "esports": "#b669f5",
     "cycling": "#ffe45b",
+    "justice/law": "#EDB392",
+    "sales/deals": "#FFD2FF",
+    "events/conferences": "#FFD2FF",
 }
