@@ -14,7 +14,7 @@ let openai = new OpenAIApi(configuration);
 
 const ENGINEERED_PROMPT = "You are going to be given a bunch of news headlines and descriptions from the last couple days to catch you up on what's going on in the world.";
 const NEWS_PROMPT_V6 = "Using the news you just received, compile a diverse list of URLs pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc.) and its exact URL. The format should be: [category, url], [category, url], [category, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
-const NEWS_PROMPT_V7 = "Using the news you just received, compile a diverse list of headlines pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc), a brief succinct summary and its exact URL. The format should be: [category, summary, url], [category, summary, url], [category, summary, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
+// const NEWS_PROMPT_V7 = "Using the news you just received, compile a diverse list of headlines pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc), a brief succinct summary and its exact URL. The format should be: [category, summary, url], [category, summary, url], [category, summary, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
 const SUMMARY_PROMPT_V1 = "Write a thoughtful and succinct summary of the article you just received. Anywhere from 3-8 sentences is ideal.";
 const QUESTION_PROMPT_V1 = "Answer me the following question, using the information from the recent article you just received (make sure you don't ever directly reference the article in your response, but rather use the information you learned from it as if its something you already knew):";
 
@@ -32,7 +32,7 @@ const requestGPT = async (messages, model) => {
             // signal: globalAbortController.signal,
         });
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         throw error;
     }    
     
@@ -68,10 +68,6 @@ const separateNews = (news) => {
     }
 
     return result;
-}
-
-const isEnglish = (str) => {
-    return /^[A-Za-z0-9]*$/.test(str);
 }
 
 const makeNewsItems = (news, recentNews) => {
@@ -212,12 +208,10 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
         const response = await fetch(`${BASE_URL}`);
         const data = await response.json();
         setMostRecentNews(data.news);
-        console.log('Most recent news: ', data.news);
         // const keywords = await getKeywords(data.news);
         // setLoadingKeywords(keywords);
         const messages = convertNewsToMessages(data.news);
         const gpt_response = await requestGPT(messages, "gpt-3.5-turbo");
-        console.log(gpt_response);
         if (!gpt_response) {
             return null;
         }
@@ -236,15 +230,11 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
         });
         const data = await response.json();
         setMostRecentNews(data.news);
-        console.log(data.news);
-        // const keywords = await getKeywords(data.news);
-        // setLoadingKeywords(keywords);
         const messages = convertNewsToMessages(data.news);
         const gpt_response = await requestGPT(messages, "gpt-3.5-turbo");
         if (!gpt_response) {
             return null;
         }
-        console.log(gpt_response);
         const newsItems = separateNews(gpt_response);
         return makeNewsItems(newsItems, data.news);
     }
@@ -259,12 +249,13 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
             body: JSON.stringify({ text: searchTerm })
         });
         const data = await response.json();
+        const newsCut = data.news.slice(0, Math.min(data.news.length, 30));
         setMostRecentNews(data.news);
-        // const keywords = await getKeywords(data.news);
-        // setLoadingKeywords(keywords);
-        console.log(data.news);
-        const messages = convertNewsToMessages(data.news);
+        const messages = convertNewsToMessages(newsCut);
         const gpt_response = await requestGPT(messages, "gpt-3.5-turbo");
+        if (!gpt_response) {
+            return null;
+        }
         const newsItems = separateNews(gpt_response);
         return makeNewsItems(newsItems, data.news);
     }

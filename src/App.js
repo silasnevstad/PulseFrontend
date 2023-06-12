@@ -60,7 +60,6 @@ function App() {
     setIsLoading(true);
     setCurrentCategory(topic.toLowerCase());
     const update = await getTopicUpdate(topic);
-    console.log('update: ', update);
     // setUpdate(sortByCategory(update));
     setUpdate(update);
     setIsLoading(false);
@@ -98,7 +97,6 @@ function App() {
     const user = await signIn(email, password);
 
     if (user) {
-      console.log('user: ', user);
       setUserId(user.uid);
       getApiKeyForUser(user.uid);
       setShowSignUpModal(false);
