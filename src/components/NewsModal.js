@@ -79,15 +79,16 @@ const NewsModal = ({ show, handleClose, summary, isLoading, currentNewsItem, cur
                                 {/* {isWaitingResponse && <div className='modal-chat-content-answer'> <p>Loading...</p> </div>} */}
                                 <div className="mobile-divider"></div>
                             </div>
-                            <div className='modal-chat-input'>
+                            <div className='modal-chat-input' >
                                 <input type='text' className='modal-chat-input-text' placeholder={placeholder} value={question} onChange={(e) => setQuestion(e.target.value)} />
-                                <button className='modal-chat-input-button' onClick={onSendClicked}>{
-                                    isWaitingResponse ? (
-                                        <div className="spinner"></div>
-                                    ) : (
-                                        'Send'
-                                    )
-                                }</button>
+                                <button className='modal-chat-input-button' onClick={onSendClicked} style={{backgroundColor: getDarkerBackground(currentCategory), color: getBackground(currentCategory), borderColor: getBackground(currentCategory)}}>
+                                    {
+                                        isWaitingResponse ? (
+                                            <div className="spinner"></div>
+                                        ) : (
+                                            'Send'
+                                    )}
+                                </button>
                             </div>
                         </div>
                     </section>

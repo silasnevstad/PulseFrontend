@@ -18,6 +18,7 @@ function App() {
   const [userApiKey, setUserApiKey] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [currentCategory, setCurrentCategory] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   // const [loadingKeywords, setLoadingKeywords] = useState([]);
   // const [currentKeyword, setCurrentKeyword] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +32,7 @@ function App() {
   const [update, setUpdate] = useState([]);
   const [summary, setSummary] = useState('');
   const [toggleMode, setToggleMode] = useState(false);
-  const { getUpdate, getTopicUpdate, getArticleSummary } = Api(mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey);
+  const { getUpdate, getTopicUpdate, getSearchTermUpdate, getArticleSummary } = Api(mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey);
 
   const fetchUpdate = async () => {
     setIsLoading(true);
@@ -160,6 +161,27 @@ function App() {
     setToggleMode(!toggleMode);
   }
 
+  const onSearchTermChanged = (e) => {
+    setSearchTerm(e.target.value);
+  }
+
+  const onSearchTermKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      onSearchClicked();
+    }
+  }
+
+  const onSearchClicked = async () => {
+    if (isLoading) {
+      return;
+    }
+    setIsLoading(true);
+    setCurrentCategory('all');
+    const update = await getSearchTermUpdate(searchTerm);
+    setUpdate(sortByCategory(update));
+    setIsLoading(false);
+  }
+
   // useEffect(() => {
   //   const changeKeyword = setInterval(() => {
   //       setCurrentKeyword(loadingKeywords[Math.floor(Math.random() * loadingKeywords.length)]);
@@ -190,7 +212,8 @@ function App() {
         {showSignUpModal && <SignUpModal show={showSignUpModal} onClose={closeSignUpModal} onSignUp={signUpUser} onLogin={logInUser} />}
         {showAccountModal && <AccountModal show={showAccountModal} onClose={closeAccountModal} onLogout={logOutUser} onAddKey={setApiKeyForUser} userId={userId} userApiKey={userApiKey} userEmail={userEmail} />}
         <div className="App-top">
-          <p className='App-subheader'>Browse a specific topic</p>
+          {/* <p className='App-subheader'>Browse a specific topic</p> */}
+          <input className='App-search' type='text' placeholder='Search for news...' value={searchTerm} onChange={onSearchTermChanged} onKeyDown={onSearchTermKeyDown} />
           <NewsButtons onTopicClicked={onTopicClicked} isLoading={isLoading} fetchUpdate={fetchUpdate} setCurrentCategory={setCurrentCategory} />
         </div>
         <div className='App-news'>

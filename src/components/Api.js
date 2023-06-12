@@ -13,9 +13,9 @@ let configuration = new Configuration({ apiKey: userApiKey || DEFAULT_API_KEY })
 let openai = new OpenAIApi(configuration);
 
 const ENGINEERED_PROMPT = "You are going to be given a bunch of news headlines and descriptions from the last couple days to catch you up on what's going on in the world.";
-const NEWS_PROMPT_V6 = "Using the news you received, compile a diverse list of URLs pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc.) and its exact URL. The format should be: [category, url], [category, url], [category, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
-const SUMMARY_PROMPT_V1 = "Write a thoughtful and succinct summary of the article you just recieved. Anywhere from 3-6 sentences is ideal.";
-const QUESTION_PROMPT_V1 = "Asnwer me the following question, using the information from the recent article you just received (make sure you don't ever directly reference the article in your response, but rather use the information you learned from it as if its something you already knew): ";
+const NEWS_PROMPT_V6 = "Using the news you just received, compile a diverse list of URLs pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc.) and its exact URL. The format should be: [category, url], [category, url], [category, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
+const SUMMARY_PROMPT_V1 = "Write a thoughtful and succinct summary of the article you just received. Anywhere from 3-8 sentences is ideal.";
+const QUESTION_PROMPT_V1 = "Answer me the following question, using the information from the recent article you just received (make sure you don't ever directly reference the article in your response, but rather use the information you learned from it as if its something you already knew):";
 
 const cancelPreviousRequest = () => {
     globalAbortController.abort();
@@ -236,7 +236,27 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
         return makeNewsItems(newsItems, data.news);
     }
 
-    return { getUpdate, getTopicUpdate, getArticleSummary, askFollowUp };
+    const getSearchTermUpdate = async (searchTerm) => {
+        cancelPreviousRequest();
+        const response = await fetch(`${BASE_URL}search`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: searchTerm })
+        });
+        const data = await response.json();
+        setMostRecentNews(data.news);
+        // const keywords = await getKeywords(data.news);
+        // setLoadingKeywords(keywords);
+        console.log(data.news);
+        const messages = convertNewsToMessages(data.news);
+        const gpt_response = await requestGPT(messages, "gpt-3.5-turbo");
+        const newsItems = separateNews(gpt_response);
+        return makeNewsItems(newsItems, data.news);
+    }
+
+    return { getUpdate, getTopicUpdate, getSearchTermUpdate, getArticleSummary, askFollowUp };
 }
 
 export default Api;
