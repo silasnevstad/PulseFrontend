@@ -97,4 +97,6 @@ export const background_colors = {
     "home and kitchen": "#FFD2FF",
     "energy": "#6EEB83",
     "streaming": "#C07FF6",
+    "esports": "#b669f5",
+    "cycling": "#ffe45b",
 }

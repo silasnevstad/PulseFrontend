@@ -17,7 +17,7 @@ function App() {
   const [userId, setUserId] = useState('');
   const [userApiKey, setUserApiKey] = useState('');
   const [userEmail, setUserEmail] = useState('');
-  const [currentCategory, setCurrentCategory] = useState('');
+  const [currentCategory, setCurrentCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   // const [loadingKeywords, setLoadingKeywords] = useState([]);
   // const [currentKeyword, setCurrentKeyword] = useState('');
@@ -31,13 +31,14 @@ function App() {
   const [mostRecentNews, setMostRecentNews] = useState([]);
   const [update, setUpdate] = useState([]);
   const [summary, setSummary] = useState('');
-  const [toggleMode, setToggleMode] = useState(false);
+  const [toggleMode, setToggleMode] = useState(true);
   const { getUpdate, getTopicUpdate, getSearchTermUpdate, getArticleSummary } = Api(mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey);
 
   const fetchUpdate = async () => {
     setIsLoading(true);
     const update = await getUpdate();
     setUpdate(sortByCategory(update));
+    // setUpdate(update);
     setIsLoading(false);
     requestedRef.current = true;
   }
@@ -59,7 +60,9 @@ function App() {
     setIsLoading(true);
     setCurrentCategory(topic.toLowerCase());
     const update = await getTopicUpdate(topic);
-    setUpdate(sortByCategory(update));
+    console.log('update: ', update);
+    // setUpdate(sortByCategory(update));
+    setUpdate(update);
     setIsLoading(false);
   }
 
@@ -214,12 +217,12 @@ function App() {
         <div className="App-top">
           {/* <p className='App-subheader'>Browse a specific topic</p> */}
           <input className='App-search' type='text' placeholder='Search for news...' value={searchTerm} onChange={onSearchTermChanged} onKeyDown={onSearchTermKeyDown} />
-          <NewsButtons onTopicClicked={onTopicClicked} isLoading={isLoading} fetchUpdate={fetchUpdate} setCurrentCategory={setCurrentCategory} />
+          <NewsButtons onTopicClicked={onTopicClicked} isLoading={isLoading} fetchUpdate={fetchUpdate} setCurrentCategory={setCurrentCategory} currentCategory={currentCategory} />
         </div>
         <div className='App-news'>
           <div className='App-date'>
             <p>{getFormattedDate()}</p>
-            <ToggleButton handleToggleMode={handleToggleMode} />
+            <ToggleButton handleToggleMode={handleToggleMode} toggleMode={toggleMode} />
           </div>
           <div className='App-paragraph'>
             {update && sortByCategory(update).map((item, index) => {

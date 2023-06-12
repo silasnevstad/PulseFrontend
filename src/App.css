@@ -44,7 +44,7 @@
   gap: 1rem;
   max-width: 90vw;
   overflow: hidden;
-  margin-top: -2.5rem;
+  margin-top: -2.8rem;
   margin-bottom: 1.5rem;
 }
 
@@ -306,6 +306,13 @@
   margin-bottom: 0rem;
   padding: 0.5rem;
   gap: 1rem;
+  overflow-x: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.App-categories::-webkit-scrollbar {
+  display: none;
 }
 
 .App-search {
@@ -316,13 +323,21 @@
   background-color: #555;
   border: 1px solid #999;
   border-radius: 10px;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 600;
-  padding: 0.6rem;
+  padding: 0.7rem;
   /* padding-right: 3.5rem; */
   width: 50%;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   color: #ededed;
+
+  /* style placeholder color */
+
+}
+
+.App-search::placeholder {
+  color: #fff;
+  opacity: .65; /* Firefox */
 }
 
 .App-search:focus {
@@ -330,15 +345,21 @@
 }
 
 .App-button {
-  font-size: 1.6em;
+  font-size: 1.4em;
   font-weight: 600;
   padding: 0.7rem 1.4rem;
   border-radius: 4px;
   border: none;
-  background-color: #999;
+  background-color: #333;
   /* border: 1px solid #999; */
   box-shadow: 0px 1px 0px 0px #ffffff90;
   color: #222;
+}
+
+@media (max-width: 1800px) {
+  .App-button {
+    font-size: 1.5em;
+  }
 }
 
 .App-button:hover {
@@ -353,27 +374,67 @@
 }
 
 .blue {
+  color: #4695D3;
+}
+
+.blue:hover, .blue-active {
   background-color: #4695D3;
+  color: #222;
 }
 
 .lightblue {
+  color: #D1F5FF;
+}
+
+.lightblue:hover, .lightblue-active {
   background-color: #D1F5FF;
+  color: #222;
 }
 
 .red {
+  color: #FF5E5B;
+}
+
+/* since hover and red-active have the same styles group them */
+.red:hover, .red-active {
   background-color: #FF5E5B;
+  color: #222;
 }
 
 .pink {
+  color: #F2BAC9;
+}
+
+.pink:hover, .pink-active {
   background-color: #F2BAC9;
+  color: #222;
+}
+
+.purple {
+  color: #E0A9FB;
+}
+
+.purple:hover, .purple-active {
+  background-color: #E0A9FB;
+  color: #222;
 }
 
 .orange {
+  color: #FF9A5B;
+}
+
+.orange:hover, .orange-active {
   background-color: #FF9A5B;
+  color: #222;
 }
 
 .green {
+  color: #6EEB83;
+}
+
+.green:hover, .green-active {
   background-color: #6EEB83;
+  color: #222;
 }
 
 .App-transparent-button {
@@ -446,7 +507,7 @@
   }
 
   .App-button {
-    font-size: 1.4em;
+    font-size: 1.3em;
   }
 
   .App-subheader {
@@ -455,6 +516,13 @@
 
   .modal {
     width: 90vw;
+  }
+}
+
+@media (max-width: 1200px) {
+  .App-button {
+    font-size: 1.1em;
+    padding: 0.6rem 1.4rem;
   }
 }
 

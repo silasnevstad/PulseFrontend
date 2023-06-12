@@ -196,12 +196,12 @@
     box-shadow: 0px 0px 0px 0px #ffffff90;
 }
 
-.redwhite {
+.small-modal .redwhite {
     background-color: #FF5E5B;
     color: #fff;
 }
 
-.green {
+.small-modal .green {
     background-color: #6EEB83;
     color: #222;
 }

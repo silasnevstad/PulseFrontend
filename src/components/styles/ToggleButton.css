@@ -1,6 +1,24 @@
 #checkbox {
     display: none;
 }
+
+.toggle-button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    opacity: .7;
+    border-radius: 15px;
+    height: 55px;
+    padding: 0 .9rem;
+}
+
+.toggle-button-container:hover {
+    color: #eee;
+    /* background-color: #444; */
+    opacity: 1;
+}
   
 .toggle {
     position: relative;
@@ -9,10 +27,21 @@
     margin: auto;
     display: block;
     height: calc(4px * 3 + 11px * 2);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .toggle:hover {
     filter: brightness(1.3);
+}
+
+.toggle-button__text {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #eee;
+    padding: 0;
+    cursor: pointer;
 }
   
 .bar {
@@ -23,7 +52,6 @@
     border-radius: calc(4px / 2);
     background: #ddd;
     color: inherit;
-    opacity: 1;
     transition: none 0.35s cubic-bezier(.5,-0.35,.35,1.5) 0s;
 }
 
@@ -34,7 +62,7 @@
 .bar--top {
     bottom: calc(50% + 8px + 4px/ 2);
     transition-property: bottom,transform;
-    transition-delay: calc(0s + 0.35s),0s;
+    /* transition-delay: calc(0s + 0.05s),0s; */
 }
 
 .bar--top:hover {
@@ -44,7 +72,7 @@
 .bar--middle {
     top: calc(50% - 4px/ 2);
     transition-property: opacity;
-    transition-delay: calc(0s + 0.35s);
+    /* transition-delay: calc(0s + 0.1s); */
 }
 
 .bar--middle:hover {
@@ -54,7 +82,7 @@
 .bar--bottom {
     top: calc(50% + 8px + 4px/ 2);
     transition-property: top,transform;
-    transition-delay: calc(0s + 0.35s),0s;
+    /* transition-delay: calc(0s + 0.05s),0s; */
 }
 
 .bar--bottom:hover {
