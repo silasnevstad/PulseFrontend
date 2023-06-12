@@ -102,7 +102,7 @@ function App() {
       setShowSignUpModal(false);
       setIsModalOpen(false);
     } else {
-      console.log('error logging in user');
+      // console.log('error logging in user');
     }
   }
 

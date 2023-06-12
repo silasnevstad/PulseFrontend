@@ -31,3 +31,20 @@ export const getFormattedDate = () => {
     let daySuffix = day < 11 || day > 13 ? ["st", "nd", "rd", "th"][Math.min((day-1)%10, 3)] : "th";
     return `${weekday[date.getDay()]} ${month[date.getMonth()]} ${day}${daySuffix}`;
 }
+
+export const stringToBagOfWords = (str) => {
+  return str.toLowerCase().split(' ').reduce((bag, word) => {
+      bag[word] = (bag[word] || 0) + 1;
+      return bag;
+  }, {});
+}
+
+export const calculateSimilarity = (bagA, bagB) => {
+  let score = 0;
+  for(let word in bagA){
+      if(bagB[word]){
+          score += Math.min(bagA[word], bagB[word]);
+      }
+  }
+  return score;
+}

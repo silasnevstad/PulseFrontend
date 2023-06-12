@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { getBackground, getDarkerBackground } from './utils';
 import '../App.css';
 import Api from './Api';
@@ -10,6 +10,7 @@ const NewsModal = ({ show, handleClose, summary, isLoading, currentNewsItem, cur
     const [question, setQuestion] = useState('');
     const [isWaitingResponse, setIsWaitingResponse] = useState(false);
     const placeholder = window.innerWidth > 600 ? 'Ask a follow up question...' : 'Ask a question...';
+    const endOfMessages = useRef(null);
     const { askFollowUp } = Api();
 
     const onSendClicked = async () => {
@@ -24,6 +25,7 @@ const NewsModal = ({ show, handleClose, summary, isLoading, currentNewsItem, cur
         setMessages(newMessages);
         setIsWaitingResponse(false);
         setQuestion('');
+        endOfMessages.current?.scrollIntoView({ behavior: 'smooth' });
     }
 
     const onReadMoreClicked = async () => {
@@ -61,12 +63,7 @@ const NewsModal = ({ show, handleClose, summary, isLoading, currentNewsItem, cur
                                     )}
                                 </button>
                             )}
-                            <div className="mobile-divider"></div>
-                            <div className="mobile-divider"></div>
                         </div>
-                        {/* when hovered button background and color should change to getBackground */}
-                        
-                        {messages.length !== 0 && <div className='modal-line'></div>}
                         <div className='modal-chat'>
                             <div className='modal-chat-content'>
                                 {messages.map((message, index) => {
@@ -76,9 +73,8 @@ const NewsModal = ({ show, handleClose, summary, isLoading, currentNewsItem, cur
                                         </div>
                                     )
                                 })}
-                                {/* {isWaitingResponse && <div className='modal-chat-content-answer'> <p>Loading...</p> </div>} */}
-                                <div className="mobile-divider"></div>
                             </div>
+                            <div ref={endOfMessages} />
                             <div className='modal-chat-input' >
                                 <input type='text' className='modal-chat-input-text' placeholder={placeholder} value={question} onChange={(e) => setQuestion(e.target.value)} />
                                 <button className='modal-chat-input-button' onClick={onSendClicked} style={{backgroundColor: getDarkerBackground(currentCategory), color: getBackground(currentCategory), borderColor: getBackground(currentCategory)}}>

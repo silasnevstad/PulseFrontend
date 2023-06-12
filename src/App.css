@@ -95,8 +95,9 @@
   align-items: center;
   position: relative;
   overflow-y: scroll;
-  -ms-overflow-style: none;  /* IE and Edge */
+  -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+  /* margin-bottom: 5rem; */
 }
 
 .modal-main::-webkit-scrollbar {
@@ -113,16 +114,15 @@
 }
 
 .modal-line {
-  height: 1px;
+  height: 2px;
   width: 100%;
   background-color: #999;
-  margin-top: 2rem;
 }
 
 .close-button {
-  position: absolute;
+  position: fixed;
   right: 5px;
-  top: 12.5px;
+  top: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -168,7 +168,7 @@
   letter-spacing: 0.2px;
   color: #fff;
   margin-top: -.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .mobile-divider {
@@ -183,9 +183,6 @@
   padding: .9rem 1.5rem;
   font-size: 1.1rem;
   font-weight: 700;
-  /* background-color: #444;
-  color: #ddd;
-  border: 1px solid #444; */
   border: none;
   border-radius: 50px;
 }
@@ -202,7 +199,10 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 0rem;
+  width: 96.5%;
+  padding-bottom: 5rem;
+  position: relative;
 }
 
 .modal-chat-input {
@@ -211,8 +211,6 @@
   bottom: 1rem;
   align-self: center;
   background-color: transparent;
-  /* background-color: #555; */
-  /* border: 1.5px solid #888; */
   border-radius: 10px;
   min-width: 60%;
   gap: .75rem;
@@ -220,14 +218,14 @@
 
 .modal-chat-input-text {
   height: 3rem;
+  min-height: 3rem;
   border-radius: 10px;
   border: none;
   background-color: #eee;
-  /* background-color: transparent; */
   color: #222;
   padding: 0.2rem 1rem;
   font-size: 1.5rem;
-  border: 1.5px solid #888;
+  border: none;
   width: 100%;
   font-weight: 500;
 }
@@ -237,6 +235,7 @@
 }
 
 .modal-chat-input-button {
+  min-height: 3rem;
   align-self: flex-end;
   font-size: 1.5rem;
   font-weight: 800;
@@ -252,12 +251,21 @@
   color: #222;
 }
 
+.modal-chat-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  position: relative;
+}
+
 .modal-chat-content-question {
   font-size: 1.2rem;
   font-weight: 500;
   color: #fff;
   opacity: 0.7;
   text-align: left;
+  width: 100%;
 }
 
 .modal-chat-content-answer {
@@ -268,6 +276,7 @@
   color: #fff;
   opacity: 1;
   text-align: left;
+  margin-top: -2rem;
 }
 
 .modal-chat-content-loading {
@@ -301,7 +310,6 @@
   flex-direction: row;
   align-items: center;
   text-align: center;
-  /* border: 2px solid #999; */
   margin-top: -1.5rem;
   margin-bottom: 0rem;
   padding: 0.5rem;
@@ -326,18 +334,14 @@
   font-size: 1.6rem;
   font-weight: 600;
   padding: 0.7rem;
-  /* padding-right: 3.5rem; */
   width: 50%;
   margin-bottom: 2rem;
   color: #ededed;
-
-  /* style placeholder color */
-
 }
 
 .App-search::placeholder {
   color: #fff;
-  opacity: .65; /* Firefox */
+  opacity: .65;
 }
 
 .App-search:focus {
@@ -348,10 +352,9 @@
   font-size: 1.4em;
   font-weight: 600;
   padding: 0.7rem 1.4rem;
-  border-radius: 4px;
+  border-radius: 10px;
   border: none;
-  background-color: #333;
-  /* border: 1px solid #999; */
+  background-color: #444;
   box-shadow: 0px 1px 0px 0px #ffffff90;
   color: #222;
 }
@@ -395,7 +398,6 @@
   color: #FF5E5B;
 }
 
-/* since hover and red-active have the same styles group them */
 .red:hover, .red-active {
   background-color: #FF5E5B;
   color: #222;
@@ -575,7 +577,6 @@
   box-shadow: 0px 4px 0px 0px #ffffff90;
 }
 
-/* when the news item is hovered also apply css to news-item-category */
 .news-item:hover .news-item-category {
   text-decoration: underline;
   text-underline-offset: 0.2em;
