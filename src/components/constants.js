@@ -103,4 +103,5 @@ export const background_colors = {
     "sales/deals": "#FFD2FF",
     "events/conferences": "#FFD2FF",
     "international news": "#FF5E5B",
+    "international relations": "#FF5E5B",
 }
