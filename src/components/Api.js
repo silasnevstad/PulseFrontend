@@ -168,7 +168,7 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
             article.category = item.category;
             article.subtitle = item.content;
             setCurrentNewsItem(article);
-            const summary = await requestGPT(convertArticleToSummaryMessages(article), "gpt-3.5-turbo");
+            const summary = await requestGPT(convertArticleToSummaryMessages(article), "gpt-3.5-turbo-0613");
             return summary;
         } else {
             return 'Sorry, I could not find an article with that description.';
@@ -182,7 +182,7 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
             {'role': 'assistant', 'content': summary},
             {'role': 'user', 'content': QUESTION_PROMPT_V1 + question}
         ];
-        const response = await requestGPT(messages, "gpt-3.5-turbo");
+        const response = await requestGPT(messages, "gpt-3.5-turbo-0613");
         return response;
     }
 
@@ -192,7 +192,7 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
             const response = await axios.get(`${BASE_URL}`);
             setMostRecentNews(response.data.news);
             const messages = convertNewsToMessages(response.data.news);
-            const gpt_response = await requestGPT(messages, "gpt-3.5-turbo");
+            const gpt_response = await requestGPT(messages, "gpt-3.5-turbo-0613");
             if (!gpt_response) return null;
             const newsItems = separateNews(gpt_response);
             return makeNewsItems(newsItems, response.data.news);
@@ -207,7 +207,7 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
             const response = await axios.post(`${BASE_URL}topic`, { topic });
             setMostRecentNews(response.data.news);
             const messages = convertNewsToMessages(response.data.news);
-            const gpt_response = await requestGPT(messages, "gpt-3.5-turbo");
+            const gpt_response = await requestGPT(messages, "gpt-3.5-turbo-0613");
             if (!gpt_response) return null;
             const newsItems = separateNews(gpt_response);
             return makeNewsItems(newsItems, response.data.news);
@@ -223,7 +223,7 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
             const newsCut = response.data.news.slice(0, Math.min(response.data.news.length, 30));
             setMostRecentNews(response.data.news);
             const messages = convertNewsToMessages(newsCut);
-            const gpt_response = await requestGPT(messages, "gpt-3.5-turbo");
+            const gpt_response = await requestGPT(messages, "gpt-3.5-turbo-0613");
             if (!gpt_response) return null;
             const newsItems = separateNews(gpt_response);
             return makeNewsItems(newsItems, response.data.news);
