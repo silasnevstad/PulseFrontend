@@ -102,4 +102,5 @@ export const background_colors = {
     "justice/law": "#EDB392",
     "sales/deals": "#FFD2FF",
     "events/conferences": "#FFD2FF",
+    "international news": "#FF5E5B",
 }

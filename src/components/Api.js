@@ -6,7 +6,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || "https://morningbrief.herokua
 const DEFAULT_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
 
 const ENGINEERED_PROMPT = "You are going to be given a bunch of news headlines and descriptions from the last couple days to catch you up on what's going on in the world.";
-const NEWS_PROMPT_V6 = "Using the news you just received, compile a diverse list of URLs pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc.) and its exact URL. The format should be: [category, url], [category, url], [category, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions. At the end of the list add a single sentence describing today.";
+const NEWS_PROMPT_V6 = "Using the news you just received, compile a diverse list of URLs pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc.) and its exact URL. The format should be: [category, url], [category, url], [category, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
 // const NEWS_PROMPT_V7 = "Using the news you just received, compile a diverse list of headlines pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc), a brief succinct summary and its exact URL. The format should be: [category, summary, url], [category, summary, url], [category, summary, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
 const SUMMARY_PROMPT_V1 = "Write a thoughtful and succinct summary of the article you just received. Anywhere from 3-8 sentences is ideal.";
 const QUESTION_PROMPT_V1 = "Answer me the following question, using the information from the recent article you just received (make sure you don't ever directly reference the article in your response, but rather use the information you learned from it as if its something you already knew):";
@@ -40,6 +40,8 @@ const requestGPT = async (messages, model) => {
 
 const convertNewsToMessages = (news) => {
     let messages = [{'role': 'system', 'content': ENGINEERED_PROMPT}];
+    // limit to 25 news items
+    news = news.slice(0, 25);
     news.forEach((article) => {
         messages.push({'role': 'system', 'content': article.title + ' ' + article.url});
     });

@@ -106,9 +106,13 @@
 }
 
 @media (max-width: 768px) {
+    .toggle-button-container {
+        padding: 0 .5rem;
+    }
+
     .toggle {
         width: 35px;
-        height: calc(4px * 3 + 10px * 2);
+        height: calc(4px * 4 + 10px * 2);
     }
 
     .bar {
@@ -116,14 +120,18 @@
     }
 
     .bar--top {
-        bottom: calc(50% + 5px + 4px/ 2);
+        bottom: calc(50% + 7px + 4px/ 2);
         transition-property: bottom,transform;
         transition-delay: calc(0s + 0.35s),0s;
     }
 
     .bar--bottom {
-        top: calc(50% + 5px + 4px/ 2);
+        top: calc(50% + 7px + 4px/ 2);
         transition-property: top,transform;
         transition-delay: calc(0s + 0.35s),0s;
+    }
+
+    .toggle-button__text {
+        display: none;
     }
 }
