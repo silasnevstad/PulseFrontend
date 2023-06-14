@@ -127,4 +127,6 @@ export const background_colors = {
     "space science": "#b669f5",
     "palaeontology": "#9D847F",
     "engineering": "#67B3EE",
+    "international conflict": "#FF5E5B",
+    "international crime": "#C672BF",
 }
