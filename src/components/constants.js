@@ -105,4 +105,8 @@ export const background_colors = {
     "international news": "#FF5E5B",
     "international relations": "#FF5E5B",
     "privacy": "#C672BF",
+    "international": "#FF5E5B",
+    "australia": "#ffe45b",
+    "uk": "#736B92",
+    "us": "#736B92",
 }
