@@ -109,4 +109,13 @@ export const background_colors = {
     "australia": "#ffe45b",
     "uk": "#736B92",
     "us": "#736B92",
+    "crime - uk": "#C672BF",
+    "crime - us": "#C672BF",
+    "environmental": "#6EEB83",
+    "international - europe": "#FF5E5B",
+    "world - india": "#FF5E5B",
+    "world - australia": "#FF5E5B",
+    "world - uk": "#FF5E5B",
+    "world - us": "#FF5E5B",
+    "world - latin america": "#FF5E5B",
 }
