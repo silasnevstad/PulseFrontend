@@ -118,4 +118,13 @@ export const background_colors = {
     "world - uk": "#FF5E5B",
     "world - us": "#FF5E5B",
     "world - latin america": "#FF5E5B",
+    "chemistry": "#D2FFD2",
+    "biology": "#D2FFD2",
+    "earth science": "#6EEB83",
+    "medical science": "#D2FFD2",
+    "physics": "#b669f5",
+    "space exploration": "#b669f5",
+    "space science": "#b669f5",
+    "palaeontology": "#9D847F",
+    "engineering": "#67B3EE",
 }
