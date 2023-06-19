@@ -7,7 +7,6 @@ const AccountModal = ({ open, onClose, onLogout, onAddKey, userApiKey, userEmail
 
     const handleConfirm = () => {
         if (settingApiKey) {
-            console.log(apiKey);
             if (!apiKey) {
                 alert('Please fill out all fields');
                 return;
@@ -25,7 +24,6 @@ const AccountModal = ({ open, onClose, onLogout, onAddKey, userApiKey, userEmail
             onLogout();
         }
     }
-
 
     return (
         <div className={`small-modal ${open ? 'open' : ''}`}>

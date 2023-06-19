@@ -51,7 +51,7 @@ async function signIn(email, password) {
 }
 
 async function signOut() {
-    auth.signOut().then(() => {
+    return auth.signOut().then(() => {
         return { success: true };
     }).catch((error) => {
         return { success: false, error: error };

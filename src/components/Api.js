@@ -45,6 +45,7 @@ const requestGPT = async (messages, model) => {
 const requestFunctionGPT = async (messages, model, recentNews) => {
     let response;
     try {
+        console.log('requesting function gpt');
         response = await openai.createChatCompletion({
             model: model,
             messages: messages,
@@ -66,6 +67,8 @@ const requestFunctionGPT = async (messages, model, recentNews) => {
                 }
             ],
         });
+
+        console.log(response.data.choices[0]);
 
         const response_message = response.data.choices[0].finish_reason
         let dataToReturn = {};

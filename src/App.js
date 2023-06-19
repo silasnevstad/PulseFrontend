@@ -160,7 +160,7 @@ function App() {
 
   const logOutUser = async () => {
     const signOutResponse = await signOut();
-    if (signOutResponse.success) {    
+    if (signOutResponse.success) {
       setUserId('');
       setUserApiKey('');
       setShowAccountModal(false);
