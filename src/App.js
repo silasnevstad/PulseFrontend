@@ -3,11 +3,12 @@ import './App.css';
 import NewsItem from './components/NewsItem';
 import NewsModal from './components/NewsModal';
 import NewsButtons from './components/NewsButtons';
+import SourceModal from './components/SourceModal';
 import SignUpModal from './components/SignUpModal';
 import AccountModal from './components/AccountModal';
 import ToggleButton from './components/ToggleButton';
 import Api from './components/Api';
-import { onAuthStateChanged, auth, getApiKey, addApiKey, signIn, signUp, signOut } from './components/firebase';
+import { onAuthStateChanged, auth, getApiKey, addApiKey, signIn, signUp, signOut, getSources } from './components/firebase';
 import { sortByCategory, getFormattedDate } from './components/utils';
 import { getBackground, getDarkerBackground } from './components/utils';
 
@@ -19,9 +20,41 @@ function App() {
   const [userEmail, setUserEmail] = useState('');
   const [currentCategory, setCurrentCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  // const [loadingKeywords, setLoadingKeywords] = useState([]);
-  // const [currentKeyword, setCurrentKeyword] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [selectedSources, setSelectedSources] = useState([
+    'abc-news',
+    'axios',
+    'google-news',
+    'fortune',
+    'bbc-news',
+    'cbs-news',
+    'vice-news',
+    'the-hill',
+    'the-next-web',
+    'new-scientist',
+    'newsweek',
+    'reuters',
+    'msnbc',
+    'the-washington-post',
+    'the-wall-street-journal',
+    'wired',
+    'bbc-sport',
+    'bleacher-report',
+    'espn',
+    'four-four-two',
+    'bloomberg',
+    'business-insider',
+    'mashable',
+    'medical-news-today',
+    'national-geographic',
+    'national-review',
+    'the-sport-bible',
+    'cnn',
+    'nbc-news',
+    'the-new-york-times',
+    'associated-press'
+  ]);
+  const [isSelectingSources, setIsSelectingSources] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showNewsModal, setShowNewsModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
@@ -32,13 +65,23 @@ function App() {
   const [update, setUpdate] = useState([]);
   const [summary, setSummary] = useState('');
   const [toggleMode, setToggleMode] = useState(true);
-  const { getUpdate, getTopicUpdate, getSearchTermUpdate, getArticleSummary } = Api(mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey);
+  const { getUpdate, getSourcesUpdate, getTopicUpdate, getSearchTermUpdate, getArticleSummary } = Api(mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey, selectedSources);
 
   const fetchUpdate = async () => {
+    if (isLoading) {
+      return;
+    }
     setIsLoading(true);
-    const update = await getUpdate();
+    let update;
+    if (selectedSources.length > 0) {
+      update = await getSourcesUpdate(selectedSources);
+    } else {
+      update = await getUpdate();
+    }
+    if (!update) {
+      return;
+    }
     setUpdate(sortByCategory(update));
-    // setUpdate(update);
     setIsLoading(false);
     requestedRef.current = true;
   }
@@ -74,14 +117,23 @@ function App() {
   }, []);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-        getApiKeyForUser(user.uid);
-        setUserEmail(user.email);
-      }
-    });
-  }, []);
+    const fetchUser = async () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          setUserId(user.uid);
+          await getApiKeyForUser(user.uid);
+          setUserEmail(user.email);
+          const firebaseResponse = await getSources(user.uid);
+          if (firebaseResponse.success) {
+            setSelectedSources(firebaseResponse.sources);
+          }
+        }
+      });
+    };
+
+    fetchUser();
+}, []);
+
 
   const signUpUser = async (email, password) => {
     const user = await signUp(email, password);
@@ -196,6 +248,13 @@ function App() {
       
       <header className="App-header">
         <h1 className='App-title'>Pulse</h1>
+        <SourceModal
+            isModalOpen={isSelectingSources}
+            setIsModalOpen={setIsSelectingSources}
+            selectedSources={selectedSources}
+            setSelectedSources={setSelectedSources}
+            fetchUpdate={fetchUpdate}
+            />
         {!userId && <button className='App-transparent-button' onClick={onSignUpClicked}>Sign Up</button>}
         {userId && <button className='App-transparent-button' onClick={onAccountClicked}>Account</button>}
       </header>
@@ -213,6 +272,7 @@ function App() {
         {showSignUpModal && <SignUpModal show={showSignUpModal} onClose={closeSignUpModal} onSignUp={signUpUser} onLogin={logInUser} />}
         {showAccountModal && <AccountModal show={showAccountModal} onClose={closeAccountModal} onLogout={logOutUser} onAddKey={setApiKeyForUser} userId={userId} userApiKey={userApiKey} userEmail={userEmail} />}
         <div className="App-top">
+
           {/* <p className='App-subheader'>Browse a specific topic</p> */}
           <input className='App-search' type='text' placeholder='Search for news...' value={searchTerm} onChange={onSearchTermChanged} onKeyDown={onSearchTermKeyDown} />
           <NewsButtons onTopicClicked={onTopicClicked} isLoading={isLoading} fetchUpdate={fetchUpdate} setCurrentCategory={setCurrentCategory} currentCategory={currentCategory} />

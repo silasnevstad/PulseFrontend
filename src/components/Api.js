@@ -16,10 +16,15 @@ let userApiKey = "";
 let configuration = new Configuration({ apiKey: userApiKey || DEFAULT_API_KEY });
 let openai = new OpenAIApi(configuration);
 
-
 const cancelPreviousRequest = () => {
     globalAbortController.abort();
     globalAbortController = new AbortController();
+}
+
+const updateApiKey = (apiKey) => {
+    userApiKey = apiKey;
+    configuration = new Configuration({ apiKey: userApiKey || DEFAULT_API_KEY });
+    openai = new OpenAIApi(configuration);
 }
 
 const requestGPT = async (messages, model) => {
@@ -31,12 +36,59 @@ const requestGPT = async (messages, model) => {
             // signal: globalAbortController.signal,
         });
     } catch (error) {
-        // console.log(error);
         throw error;
     }    
     
     return response['data']['choices'][0]['message']['content'];
 }
+
+const requestFunctionGPT = async (messages, model, recentNews) => {
+    let response;
+    try {
+        response = await openai.createChatCompletion({
+            model: model,
+            messages: messages,
+            functions: [
+                {
+                    "name": "make_news",
+                    "description": "Makes a list of news items given a list of categories and urls pairs",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "news": {
+                                "type": "array",
+                                "description": "The list of news items to be made (each item is a list of category and url pairs)",
+                                "items": { "type": "array", "items": { "type": "string" } },
+                            },
+                        },
+                        "required": ["news"],
+                    },
+                }
+            ],
+        });
+
+        const response_message = response.data.choices[0].finish_reason
+        let dataToReturn = {};
+
+        if (response_message === "function_call") {
+            const functionToUse = response.data.choices[0].message?.function_call;
+
+            if (functionToUse.name === 'make_news') {
+                const args = JSON.parse(functionToUse.arguments);
+                const newsDict = args.news.map(item => {
+                    return {category: item[0], url: item[1]};
+                });
+                dataToReturn = makeNewsItems(newsDict, recentNews);
+            }
+            return dataToReturn;
+        }
+
+    } catch (error) {
+        throw error;
+    }
+    return response['data']['choices'][0]['message']['content'];
+}
+
 
 const convertNewsToMessages = (news) => {
     let messages = [{'role': 'system', 'content': ENGINEERED_PROMPT}];
@@ -55,21 +107,21 @@ const convertArticleToSummaryMessages = (article) => {
     return messages;
 }
 
-const separateNews = (news) => {
-    // regex to find category and url pairs in the string
-    const regex = /\[([^,]+), ([^\]]+)\]/g;
-    let match;
-    let result = [];
+// const separateNews = (news) => {
+//     // regex to find category and url pairs in the string
+//     const regex = /\[([^,]+), ([^\]]+)\]/g;
+//     let match;
+//     let result = [];
 
-    while ((match = regex.exec(news)) !== null) {
-      result.push({
-        category: match[1],
-        url: match[2],
-      });
-    }
+//     while ((match = regex.exec(news)) !== null) {
+//       result.push({
+//         category: match[1],
+//         url: match[2],
+//       });
+//     }
 
-    return result;
-}
+//     return result;
+// }
 
 const makeNewsItems = (news, recentNews) => {
     let recentNewsMap = new Map();
@@ -91,7 +143,6 @@ const findArticleFromDescription = (news, item) => {
             return news[i];
         }
     }
-    // console.log('No exact match found for article with description: ' + item.content);
     // Proceed with bag-of-words similarity calculation if no exact match found
     let descriptionBag = stringToBagOfWords(item.content);
     let highestScore = 0;
@@ -109,42 +160,11 @@ const findArticleFromDescription = (news, item) => {
     return mostSimilarArticle;
 }
 
-// const getKeywordsFromString = (str) => {
-//     let doc = nlp(str);
-//     let nouns = doc.nouns().out('array'); // extracts the nouns
-
-//     // extract keywords from the nouns using keyword-extractor
-//     let keywords = keyword_extractor.extract(nouns.join(' '), {
-//         language: 'english',
-//         remove_digits: true,
-//         return_changed_case: true,
-//         remove_duplicates: true
-//     });
-
-//     // remove numbers and punctuation
-//     keywords = keywords.filter((keyword) => {
-//         return !keyword.match(/^[0-9]+$/) && !keyword.match(/^[.,/#!$%;:{}=\-_`~()]+$/);
-//     });
-
-//     return keywords;
-// }
-
-// const getKeywords = async (news) => {
-//     let keywords = [];
-
-//     news.forEach((article) => {
-//         let articleKeywords = getKeywordsFromString(article.description + ' ' + article.content);
-//         keywords = keywords.concat(articleKeywords);
-//     });
-
-//     // Remove duplicates
-//     keywords = [...new Set(keywords)];
-
-//     return keywords;
-// }
-
-const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) => {
+const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey, selectedSources) => {
     // setUserApiKey(userApiKey);
+    if (userApiKey) {
+        updateApiKey(userApiKey);
+    }
 
     const getArticleSummary = async (item) => {
         cancelPreviousRequest();
@@ -192,10 +212,23 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
             const response = await axios.get(`${BASE_URL}`);
             setMostRecentNews(response.data.news);
             const messages = convertNewsToMessages(response.data.news);
-            const gpt_response = await requestGPT(messages, "gpt-3.5-turbo-0613");
+            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-16k-0613", response.data.news);
             if (!gpt_response) return null;
-            const newsItems = separateNews(gpt_response);
-            return makeNewsItems(newsItems, response.data.news);
+            return gpt_response;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const getSourcesUpdate = async (sources) => {
+        cancelPreviousRequest();
+        try {
+            const response = await axios.post(`${BASE_URL}sources`, { sources });
+            setMostRecentNews(response.data.news);
+            const messages = convertNewsToMessages(response.data.news);
+            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-16k-0613", response.data.news);
+            if (!gpt_response) return null;
+            return gpt_response;
         } catch (error) {
             console.error(error);
         }
@@ -207,10 +240,9 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
             const response = await axios.post(`${BASE_URL}topic`, { topic });
             setMostRecentNews(response.data.news);
             const messages = convertNewsToMessages(response.data.news);
-            const gpt_response = await requestGPT(messages, "gpt-3.5-turbo-0613");
+            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-16k-0613", response.data.news);
             if (!gpt_response) return null;
-            const newsItems = separateNews(gpt_response);
-            return makeNewsItems(newsItems, response.data.news);
+            return gpt_response;
         } catch (error) {
             console.error(error);
         }
@@ -223,16 +255,19 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey) 
             const newsCut = response.data.news.slice(0, Math.min(response.data.news.length, 30));
             setMostRecentNews(response.data.news);
             const messages = convertNewsToMessages(newsCut);
-            const gpt_response = await requestGPT(messages, "gpt-3.5-turbo-0613");
+            // const gpt_response = await requestGPT(messages, "gpt-3.5-turbo-0613");
+            // if (!gpt_response) return null;
+            // const newsItems = separateNews(gpt_response);
+            // return makeNewsItems(newsItems, response.data.news);
+            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-16k-0613", response.data.news);
             if (!gpt_response) return null;
-            const newsItems = separateNews(gpt_response);
-            return makeNewsItems(newsItems, response.data.news);
+            return gpt_response;
         } catch (error) {
             console.error(error);
         }
     }
 
-    return { getUpdate, getTopicUpdate, getSearchTermUpdate, getArticleSummary, askFollowUp };
+    return { getUpdate, getSourcesUpdate, getTopicUpdate, getSearchTermUpdate, getArticleSummary, askFollowUp };
 }
 
 export default Api;

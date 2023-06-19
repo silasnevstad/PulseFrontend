@@ -1,0 +1,111 @@
+.source-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: -.5rem;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 100;
+}
+
+.source-modal__header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0rem;
+    gap: .5rem;
+}
+
+.source-modal__header:hover {
+    cursor: pointer;
+    filter: brightness(1.3);
+}
+
+.source-modal__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.source-modal .feather {
+    stroke-width: 2;
+    width: 2.2rem;
+    height: 2.2rem;
+    color: #eee;
+    cursor: pointer;
+    animation: rotate 0.5s ease-in-out;
+}
+
+.feather-chevron-up {
+    animation: rotate 0.5s ease-in-out;
+    transform: rotate(180deg);
+}
+
+.feather-chevron-down {
+    animation: rotate 0.5s ease-in-out;
+    transform: rotate(0deg);
+}
+
+.source-modal__body {
+    width: 150%;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background-color: #333;
+    padding: 1rem;
+    border-radius: 1.5rem;
+}
+
+.source-modal__source-button {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #222;
+    background-color: #eee;
+    border: none;
+    border-radius: .5rem;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem;
+    opacity: 0.6;
+}
+
+.source-modal__source-button:hover {
+    transition: all 0.2s ease-in-out;
+    transform: scale(1.05);
+}
+
+.source-modal__source-button--selected {
+    background-color: #FF5E5B;
+    color: #222;
+    font-size: 1.3rem;
+    font-weight: 500;
+    border: none;
+    border-radius: .5rem;
+    padding: 0.5rem 1rem;
+    margin: 0.3rem;
+    opacity: 1;
+}
+
+.source-modal__source-button--selected:hover {
+    transition: all 0.2s ease-in-out;
+    transform: scale(1.05);
+}
+
+.source-modal__top-button {
+    background-color: #eeeeee;
+    color: #222;
+    font-size: 1.3rem;
+    font-weight: 500;
+    border: none;
+    border-radius: .5rem;
+    padding: 0.5rem 1rem;
+    margin: 0.3rem;
+    opacity: 1;
+}
+
+.source-modal__top-button:hover {
+    transition: all 0.2s ease-in-out;
+    transform: scale(1.05);
+}

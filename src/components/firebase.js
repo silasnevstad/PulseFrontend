@@ -58,6 +58,40 @@ async function signOut() {
     });
 }
 
+async function setSources(uid, sources) {
+    if (!uid || !sources) {
+        return { success: false, error: 'missing-fields' };
+    }
+    const userDocRef = doc(db, `users/${uid}`);
+    return setDoc(userDocRef, { sources: sources }, { merge: true })
+        .then(() => {
+            return { success: true };
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            return { success: false, error: errorCode };
+        });
+}
+
+async function getSources(uid) {
+    if (!uid) {
+        return { success: false, error: 'missing-fields' };
+    }
+
+    const userDocRef = doc(db, `users/${uid}`);
+    return getDoc(userDocRef)
+        .then((doc) => {
+            if (doc.exists() && doc.data().sources) {
+                return { success: true, sources: doc.data().sources };
+            } else {
+                return { success: false, error: 'no-document' };
+            }
+        }).catch((error) => {
+            return { success: false, error: error };
+        }
+    );
+}
+
 // a function for adding an api key to a user's account
 async function addApiKey(uid, apiKey) {
     if (!uid || !apiKey) {
@@ -93,4 +127,4 @@ async function getApiKey(uid) {
     );
 }
 
-export { signUp, signIn, signOut, auth, addApiKey, getApiKey, onAuthStateChanged };
+export { signUp, signIn, signOut, auth, addApiKey, getApiKey, setSources, getSources, onAuthStateChanged };
