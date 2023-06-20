@@ -11,48 +11,18 @@ import Api from './components/Api';
 import { onAuthStateChanged, auth, getApiKey, addApiKey, signIn, signUp, signOut, getSources } from './components/firebase';
 import { sortByCategory, getFormattedDate } from './components/utils';
 import { getBackground, getDarkerBackground } from './components/utils';
+import { ALL_SOURCES } from './components/constants';
 
 function App() {
   // const [currentFreeUse, setCurrentFreeUse] = useState(0);
   // const maxFreeUse = 5;
+  const [firstTimer, setFirstTimer] = useState(true);
   const [userId, setUserId] = useState('');
   const [userApiKey, setUserApiKey] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [currentCategory, setCurrentCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSources, setSelectedSources] = useState([
-    'abc-news',
-    'axios',
-    'google-news',
-    'fortune',
-    'bbc-news',
-    'cbs-news',
-    'vice-news',
-    'the-hill',
-    'the-next-web',
-    'new-scientist',
-    'newsweek',
-    'reuters',
-    'msnbc',
-    'the-washington-post',
-    'the-wall-street-journal',
-    'wired',
-    'bbc-sport',
-    'bleacher-report',
-    'espn',
-    'four-four-two',
-    'bloomberg',
-    'business-insider',
-    'mashable',
-    'medical-news-today',
-    'national-geographic',
-    'national-review',
-    'the-sport-bible',
-    'cnn',
-    'nbc-news',
-    'the-new-york-times',
-    'associated-press'
-  ]);
+  const [selectedSources, setSelectedSources] = useState(ALL_SOURCES.map(source => source.id));
   const [isSelectingSources, setIsSelectingSources] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -71,6 +41,7 @@ function App() {
     if (isLoading) {
       return;
     }
+    console.log('fetching update');
     setIsLoading(true);
     let update;
     if (selectedSources.length > 0) {
@@ -78,6 +49,7 @@ function App() {
     } else {
       update = await getUpdate();
     }
+    console.log(update);
     if (!update) {
       return;
     }
@@ -120,12 +92,14 @@ function App() {
     const fetchUser = async () => {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
+          setFirstTimer(false);
           setUserId(user.uid);
           await getApiKeyForUser(user.uid);
           setUserEmail(user.email);
           const firebaseResponse = await getSources(user.uid);
           if (firebaseResponse.success) {
             setSelectedSources(firebaseResponse.sources);
+            console.log(firebaseResponse.sources);
           }
         }
       });
@@ -235,14 +209,6 @@ function App() {
     setIsLoading(false);
   }
 
-  // useEffect(() => {
-  //   const changeKeyword = setInterval(() => {
-  //       setCurrentKeyword(loadingKeywords[Math.floor(Math.random() * loadingKeywords.length)]);
-  //   }, 2000); // change keyword every 2 seconds
-
-  //   return () => clearInterval(changeKeyword); // clear interval on component unmount
-  // }, [loadingKeywords]);
-
   return (
     <div className={`App ${isModalOpen ? '' : ''}`}>
       
@@ -254,6 +220,7 @@ function App() {
             selectedSources={selectedSources}
             setSelectedSources={setSelectedSources}
             fetchUpdate={fetchUpdate}
+            firstTimer={firstTimer}
             />
         {!userId && <button className='App-transparent-button' onClick={onSignUpClicked}>Sign Up</button>}
         {userId && <button className='App-transparent-button' onClick={onAccountClicked}>Account</button>}
@@ -289,6 +256,10 @@ function App() {
           </div>
         </div>
       </main>
+      <footer className='App-footer' style={{marginTop: update.length === 0 ? '38vh' : '0'}}>
+        <p style={{opacity: '0.5'}}>Pulse &copy; 2023 By Silas Nevstad</p>
+      </footer>
+
     </div>
   );
 }

@@ -49,6 +49,12 @@
   margin-bottom: 1.5rem;
 }
 
+.App-footer {
+  bottom: 0;
+  /* position: absolute; */
+  /* display: flex; */
+}
+
 .overlay {
   position: fixed;
   top: 0;

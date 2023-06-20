@@ -45,7 +45,6 @@ const requestGPT = async (messages, model) => {
 const requestFunctionGPT = async (messages, model, recentNews) => {
     let response;
     try {
-        console.log('requesting function gpt');
         response = await openai.createChatCompletion({
             model: model,
             messages: messages,
@@ -67,8 +66,6 @@ const requestFunctionGPT = async (messages, model, recentNews) => {
                 }
             ],
         });
-
-        console.log(response.data.choices[0]);
 
         const response_message = response.data.choices[0].finish_reason
         let dataToReturn = {};
@@ -228,8 +225,10 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey, 
         try {
             const response = await axios.post(`${BASE_URL}sources`, { sources });
             setMostRecentNews(response.data.news);
+            console.log(response.data.news);
             const messages = convertNewsToMessages(response.data.news);
             const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-16k-0613", response.data.news);
+            console.log(gpt_response);
             if (!gpt_response) return null;
             return gpt_response;
         } catch (error) {
