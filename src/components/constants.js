@@ -154,6 +154,9 @@ export const background_colors = {
     "animals": "#ffe45b",
     "real estate": "#9D847F",
     "internet": "#67B3EE",
+    "affirmative action": "#F9C784",
+    "global affairs": "#FF5E5B",
+    "parenting": "#FFD2FF",
 }
 
 export const ALL_SOURCES = [

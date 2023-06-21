@@ -51,13 +51,13 @@ const requestFunctionGPT = async (messages, model, recentNews) => {
             functions: [
                 {
                     "name": "make_news",
-                    "description": "Makes a list of news items given a list of categories and urls pairs",
+                    "description": "Makes a list of news items given a list of category and title pairs",
                     "parameters": {
                         "type": "object",
                         "properties": {
                             "news": {
                                 "type": "array",
-                                "description": "The list of news items to be made (each item is a list of category and url pairs)",
+                                "description": "The list of news items to be made (each item is a list of category and title pairs)",
                                 "items": { "type": "array", "items": { "type": "string" } },
                             },
                         },
