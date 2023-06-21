@@ -22,7 +22,7 @@ function App() {
   const [userEmail, setUserEmail] = useState('');
   const [currentCategory, setCurrentCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSources, setSelectedSources] = useState(ALL_SOURCES.map(source => source.id));
+  const [selectedSources, setSelectedSources] = useState([]);
   const [isSelectingSources, setIsSelectingSources] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
