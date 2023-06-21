@@ -6,7 +6,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || "https://morningbrief.herokua
 const DEFAULT_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
 
 const ENGINEERED_PROMPT = "You are going to be given a bunch of news headlines and descriptions from the last couple days to catch you up on what's going on in the world.";
-const NEWS_PROMPT_V6 = "Using the news you just received, compile a diverse list of URLs pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. IMPORTANT: Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc.) and its exact URL (only include these two items, nothing else). The format should be: [category, url], [category, url], [category, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
+const NEWS_PROMPT_V6 = "Using the news you just received, compile a diverse list of exact Titles pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. IMPORTANT: Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc.) and its exact URL (only include these two items, nothing else). The format should be: [category, title], [category, title], [category, title],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
 // const NEWS_PROMPT_V7 = "Using the news you just received, compile a diverse list of headlines pertaining to prominent events from across the globe. Strive for about 15 news items and prioritize those items which you deem the most significant and relevant. Each item must be enclosed in brackets [], and include its unique category (e.g., technology, politics, etc), a brief succinct summary and its exact URL. The format should be: [category, summary, url], [category, summary, url], [category, summary, url],…. Prioritize diversity and significance of news (so emphasize on ensuring a broad mix of significant new), and make sure there are no repetitions.";
 const SUMMARY_PROMPT_V1 = "Write a thoughtful and succinct summary of the article you just received. Anywhere from 3-8 sentences is ideal.";
 const QUESTION_PROMPT_V1 = "Answer me the following question, using the information from the recent article you just received (make sure you don't ever directly reference the article in your response, but rather use the information you learned from it as if its something you already knew):";
@@ -76,7 +76,7 @@ const requestFunctionGPT = async (messages, model, recentNews) => {
             if (functionToUse.name === 'make_news') {
                 const args = JSON.parse(functionToUse.arguments);
                 const newsDict = args.news.map(item => {
-                    return {category: item[0], url: item[1]};
+                    return {category: item[0], title: item[1]};
                 });
                 dataToReturn = makeNewsItems(newsDict, recentNews);
             }
@@ -95,7 +95,7 @@ const convertNewsToMessages = (news) => {
     // limit to 25 news items
     news = news.slice(0, 25);
     news.forEach((article) => {
-        messages.push({'role': 'system', 'content': article.title + ' ' + article.url});
+        messages.push({'role': 'system', 'content': article.title});
     });
     messages.push({'role': 'system', 'content': NEWS_PROMPT_V6});
     return messages;
@@ -107,29 +107,13 @@ const convertArticleToSummaryMessages = (article) => {
     return messages;
 }
 
-// const separateNews = (news) => {
-//     // regex to find category and url pairs in the string
-//     const regex = /\[([^,]+), ([^\]]+)\]/g;
-//     let match;
-//     let result = [];
-
-//     while ((match = regex.exec(news)) !== null) {
-//       result.push({
-//         category: match[1],
-//         url: match[2],
-//       });
-//     }
-
-//     return result;
-// }
-
 const makeNewsItems = (news, recentNews) => {
     let recentNewsMap = new Map();
-    recentNews.forEach(item => recentNewsMap.set(item.url, item));
+    recentNews.forEach(item => recentNewsMap.set(item.title, item));
     
     let newsItems = news.map(item => {
-        if (recentNewsMap.has(item.url)) {
-            let recentItem = recentNewsMap.get(item.url);
+        if (recentNewsMap.has(item.title)) {
+            let recentItem = recentNewsMap.get(item.title);
             return {category: item.category, url: item.url, title: recentItem.title, content: recentItem.description};
         }
     }).filter(Boolean); // remove undefined items
@@ -172,7 +156,6 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey, 
         try {
             article = findArticleFromDescription(mostRecentNews, item);
         } catch (error) {
-            // console.log(error);
             return 'Sorry, I could not find an article with that description.';
         }
         if (article) {
@@ -212,7 +195,7 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey, 
             const response = await axios.get(`${BASE_URL}`);
             setMostRecentNews(response.data.news);
             const messages = convertNewsToMessages(response.data.news);
-            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-16k-0613", response.data.news);
+            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-0613", response.data.news);
             if (!gpt_response) return null;
             return gpt_response;
         } catch (error) {
@@ -225,10 +208,8 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey, 
         try {
             const response = await axios.post(`${BASE_URL}sources`, { sources });
             setMostRecentNews(response.data.news);
-            console.log(response.data.news);
             const messages = convertNewsToMessages(response.data.news);
-            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-16k-0613", response.data.news);
-            console.log(gpt_response);
+            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-0613", response.data.news);
             if (!gpt_response) return null;
             return gpt_response;
         } catch (error) {
@@ -242,7 +223,7 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey, 
             const response = await axios.post(`${BASE_URL}topic`, { topic });
             setMostRecentNews(response.data.news);
             const messages = convertNewsToMessages(response.data.news);
-            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-16k-0613", response.data.news);
+            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-0613", response.data.news);
             if (!gpt_response) return null;
             return gpt_response;
         } catch (error) {
@@ -261,7 +242,7 @@ const Api = (mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey, 
             // if (!gpt_response) return null;
             // const newsItems = separateNews(gpt_response);
             // return makeNewsItems(newsItems, response.data.news);
-            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-16k-0613", response.data.news);
+            const gpt_response = await requestFunctionGPT(messages, "gpt-3.5-turbo-0613", response.data.news);
             if (!gpt_response) return null;
             return gpt_response;
         } catch (error) {

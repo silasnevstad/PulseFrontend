@@ -41,7 +41,6 @@ function App() {
     if (isLoading) {
       return;
     }
-    console.log('fetching update');
     setIsLoading(true);
     let update;
     if (selectedSources.length > 0) {
@@ -49,7 +48,6 @@ function App() {
     } else {
       update = await getUpdate();
     }
-    console.log(update);
     if (!update) {
       return;
     }
