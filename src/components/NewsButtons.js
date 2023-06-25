@@ -5,7 +5,7 @@ const NewsButtons = ({ onTopicClicked, isLoading, fetchUpdate, setCurrentCategor
     }
 
     return (
-        <div className="App-categories" style={{ opacity: isLoading ? 0.7 : 1 }}>
+        <div className="App-categories" style={{ opacity: isLoading ? 0.75 : 1 }}>
             <button className={`App-button  ${currentCategory === 'all' ? 'red-active' : 'red'}`} onClick={handleAll} disabled={isLoading}>All</button>
             <button className={`App-button ${currentCategory === 'technology' ? 'blue-active' : 'blue'}`} onClick={() => {onTopicClicked('technology')}} disabled={isLoading}>Technology</button>
             <button className={`App-button ${currentCategory === 'science' ? 'green-active' : 'green'}`} onClick={() => {onTopicClicked('science')}} disabled={isLoading}>Science</button>

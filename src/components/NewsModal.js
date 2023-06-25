@@ -47,7 +47,12 @@ const NewsModal = ({ show, handleClose, summary, isLoading, currentNewsItem, cur
                 </div>)
                 : (
                     <section className='modal-main'>
-                        <button className='close-button' type="button" onClick={handleClose}>×</button>
+                        <button className='source-modal-close-button filled' type="button" onClick={handleClose}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                        {/* <button className="source-modal-close-button" onClick={handleToggleVisibility}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button> */}
                         <div className='modal-content'>
                             <h1 className="modal-item-category" style={{color: getBackground(currentNewsItem.category)}}>{currentNewsItem.category[0].toUpperCase() + currentNewsItem.category.slice(1)}</h1>
                             <h2 className="modal-item-title" onClick={() => window.open(currentNewsItem.url, '_blank')}>{currentNewsItem.title}</h2>
@@ -63,6 +68,7 @@ const NewsModal = ({ show, handleClose, summary, isLoading, currentNewsItem, cur
                                     )}
                                 </button>
                             )}
+                            <div className="modal-item-spacer"></div>
                         </div>
                         <div className='modal-chat'>
                             <div className='modal-chat-content'>

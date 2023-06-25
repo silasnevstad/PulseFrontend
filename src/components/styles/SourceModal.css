@@ -3,31 +3,40 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: -.5rem;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, 0);
     z-index: 100;
 }
 
-.source-modal__header {
+.source-modal__header-btn {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 0rem;
-    gap: .5rem;
+
+    font-size: 1.3em;
+    font-weight: 600;
+    padding: 0.1rem 1.4rem;
+    border-radius: 10px;
+    height: 3.25rem;
+    border: none;
+    background-color: #FF5E5B;
+    box-shadow: 0px 1px 0px 0px #ffffff90;
+    color: #222;
 }
 
-.source-modal__header:hover {
+.source-modal__header-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 2px 0px 0px #ffffff90;
+    filter: brightness(1.1);
+}
+
+/* .source-modal__header:hover {
     cursor: pointer;
     filter: brightness(1.3);
-}
+} */
 
 .source-modal__title {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 700;
 }
 
@@ -40,18 +49,21 @@
     animation: rotate 0.5s ease-in-out;
 }
 
-.feather .up {
+.source-modal .feather .up {
     animation: rotate 0.5s ease-in-out;
     transform: rotate(180deg);
 }
 
-.feather .down {
+.source-modal .feather .down {
     animation: rotate 0.5s ease-in-out;
     transform: rotate(0deg);
 }
 
 .source-modal__body {
-    width: 150%;
+    position: absolute;
+    top: 4rem;
+    left: 10%;
+    width: 80%;
     justify-content: flex-start;
     align-items: flex-start;
     background-color: #333;
@@ -60,8 +72,9 @@
 }
 
 .source-modal__source-button {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 500;
+    letter-spacing: 0.05rem;
     color: #222;
     background-color: #eee;
     border: none;
@@ -70,6 +83,10 @@
     margin: 0.3rem;
     opacity: 0.6;
 }
+
+.source-modal__header-btn.hidden {
+    display: none;
+}  
 
 .source-modal__source-button:hover {
     transition: all 0.2s ease-in-out;
@@ -96,7 +113,7 @@
 .source-modal__top-button {
     background-color: #eeeeee;
     color: #222;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 500;
     border: none;
     border-radius: .5rem;
@@ -110,6 +127,46 @@
     transform: scale(1.05);
 }
 
+.source-modal-close-button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .9rem 1rem;
+    background-color: transparent;
+    border: none;
+}
+
+.source-modal-close-button.filled {
+    background-color: #FF5E5B;
+    border-radius: .4rem;
+    padding: 1rem 1rem;
+    top: .9rem;
+    right: .4rem;
+}
+
+.close-button .feater-x {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #222;
+}
+
+.source-modal-close-button .feather-x {
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    width: 1.5rem;
+    height: 1.5rem;
+    stroke-width: 2;
+    color: #ddd;
+}
+
 @media (max-width: 768px) {
     .source-modal {
         width: 100%;
@@ -117,15 +174,19 @@
     }
     
     .source-modal__body {
-        width: 100%;
+        width: 90%;
+        left: 0.5rem;
+        top: 1rem;
     }
 
     .source-modal__header {
         gap: 0.2rem;
+        width: 100%;
+        
     }
 
     .source-modal__title {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
 
     .source-modal .feather {
@@ -145,5 +206,11 @@
     .source-modal__source-button--selected {
         font-size: 1.1rem;
         margin: 0.2rem;
+    }
+
+    .source-modal__header-btn {
+        height: 2.6rem;
+        width: 25%;
+        margin-top: 0.5rem;
     }
 }

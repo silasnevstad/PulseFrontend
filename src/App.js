@@ -11,7 +11,7 @@ import Api from './components/Api';
 import { onAuthStateChanged, auth, getApiKey, addApiKey, signIn, signUp, signOut, getSources } from './components/firebase';
 import { sortByCategory, getFormattedDate } from './components/utils';
 import { getBackground, getDarkerBackground } from './components/utils';
-import { ALL_SOURCES } from './components/constants';
+// import { ALL_SOURCES } from './components/constants';
 
 function App() {
   // const [currentFreeUse, setCurrentFreeUse] = useState(0);
@@ -24,6 +24,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSources, setSelectedSources] = useState([]);
   const [isSelectingSources, setIsSelectingSources] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showNewsModal, setShowNewsModal] = useState(false);
@@ -48,11 +49,12 @@ function App() {
     } else {
       update = await getUpdate();
     }
+    setIsLoading(false);
     if (!update) {
+      setIsError(true);
       return;
     }
     setUpdate(sortByCategory(update));
-    setIsLoading(false);
     requestedRef.current = true;
   }
 
@@ -104,7 +106,7 @@ function App() {
     };
 
     fetchUser();
-}, []);
+  }, []);
 
 
   const signUpUser = async (email, password) => {
@@ -212,34 +214,53 @@ function App() {
       
       <header className="App-header">
         <h1 className='App-title'>Pulse</h1>
-        <SourceModal
-            isModalOpen={isSelectingSources}
-            setIsModalOpen={setIsSelectingSources}
-            selectedSources={selectedSources}
-            setSelectedSources={setSelectedSources}
-            fetchUpdate={fetchUpdate}
-            firstTimer={firstTimer}
-            />
+        {/* <SourceModal
+          isModalOpen={isSelectingSources}
+          setIsModalOpen={setIsSelectingSources}
+          selectedSources={selectedSources}
+          setSelectedSources={setSelectedSources}
+          fetchUpdate={fetchUpdate}
+          firstTimer={firstTimer}
+        /> */}
         {!userId && <button className='App-transparent-button' onClick={onSignUpClicked}>Sign Up</button>}
         {userId && <button className='App-transparent-button' onClick={onAccountClicked}>Account</button>}
       </header>
       <main className='App-main'>
         {isModalOpen && <div className="overlay"></div>}
         {isLoading && 
-          <div className="loading">
+          <div className="loading"> 
             <svg width="64px" height="48px">
               <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="back" style={{stroke: getDarkerBackground(currentCategory)}} />
               <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="front" style={{stroke: getBackground(currentCategory)}} />
             </svg>
             {/* {loadingKeywords && <p className='loading-text'>Reading about {currentKeyword}...</p>} */}
           </div>}
+        {isError &&
+          <div className="error-message">
+            <div className="error-title">
+              Oops!
+            </div>
+            <div className="error-text">
+              Please try again later.
+            </div>
+          </div>
+        }
         {showNewsModal && <NewsModal show={showNewsModal} handleClose={closeNewsModal} summary={summary} isLoading={isLoading} currentNewsItem={currentNewsItem} currentCategory={currentCategory} />}
         {showSignUpModal && <SignUpModal show={showSignUpModal} onClose={closeSignUpModal} onSignUp={signUpUser} onLogin={logInUser} />}
         {showAccountModal && <AccountModal show={showAccountModal} onClose={closeAccountModal} onLogout={logOutUser} onAddKey={setApiKeyForUser} userId={userId} userApiKey={userApiKey} userEmail={userEmail} />}
         <div className="App-top">
-
           {/* <p className='App-subheader'>Browse a specific topic</p> */}
-          <input className='App-search' type='text' placeholder='Search for news...' value={searchTerm} onChange={onSearchTermChanged} onKeyDown={onSearchTermKeyDown} />
+          <div className="App-top-inputs">
+            <input className='App-search' type='text' placeholder='Search for news...' value={searchTerm} onChange={onSearchTermChanged} onKeyDown={onSearchTermKeyDown} />
+            <SourceModal
+              isModalOpen={isSelectingSources}
+              setIsModalOpen={setIsSelectingSources}
+              selectedSources={selectedSources}
+              setSelectedSources={setSelectedSources}
+              fetchUpdate={fetchUpdate}
+              firstTimer={firstTimer}
+            />
+          </div>
           <NewsButtons onTopicClicked={onTopicClicked} isLoading={isLoading} fetchUpdate={fetchUpdate} setCurrentCategory={setCurrentCategory} currentCategory={currentCategory} />
         </div>
         <div className='App-news'>
