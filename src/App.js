@@ -11,7 +11,6 @@ import Api from './components/Api';
 import { onAuthStateChanged, auth, getApiKey, addApiKey, signIn, signUp, signOut, getSources } from './components/firebase';
 import { sortByCategory, getFormattedDate } from './components/utils';
 import { getBackground, getDarkerBackground } from './components/utils';
-// import { ALL_SOURCES } from './components/constants';
 
 function App() {
   // const [currentFreeUse, setCurrentFreeUse] = useState(0);
@@ -75,8 +74,7 @@ function App() {
     setIsLoading(true);
     setCurrentCategory(topic.toLowerCase());
     const update = await getTopicUpdate(topic);
-    // setUpdate(sortByCategory(update));
-    setUpdate(update);
+    setUpdate(sortByCategory(update));
     setIsLoading(false);
   }
 
@@ -128,7 +126,7 @@ function App() {
       setShowSignUpModal(false);
       setIsModalOpen(false);
     } else {
-      // console.log('error logging in user');
+      // console.error('error logging in user');
     }
   }
 
@@ -214,14 +212,6 @@ function App() {
       
       <header className="App-header">
         <h1 className='App-title'>Pulse</h1>
-        {/* <SourceModal
-          isModalOpen={isSelectingSources}
-          setIsModalOpen={setIsSelectingSources}
-          selectedSources={selectedSources}
-          setSelectedSources={setSelectedSources}
-          fetchUpdate={fetchUpdate}
-          firstTimer={firstTimer}
-        /> */}
         {!userId && <button className='App-transparent-button' onClick={onSignUpClicked}>Sign Up</button>}
         {userId && <button className='App-transparent-button' onClick={onAccountClicked}>Account</button>}
       </header>
@@ -233,7 +223,6 @@ function App() {
               <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="back" style={{stroke: getDarkerBackground(currentCategory)}} />
               <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="front" style={{stroke: getBackground(currentCategory)}} />
             </svg>
-            {/* {loadingKeywords && <p className='loading-text'>Reading about {currentKeyword}...</p>} */}
           </div>}
         {isError &&
           <div className="error-message">
@@ -249,7 +238,6 @@ function App() {
         {showSignUpModal && <SignUpModal show={showSignUpModal} onClose={closeSignUpModal} onSignUp={signUpUser} onLogin={logInUser} />}
         {showAccountModal && <AccountModal show={showAccountModal} onClose={closeAccountModal} onLogout={logOutUser} onAddKey={setApiKeyForUser} userId={userId} userApiKey={userApiKey} userEmail={userEmail} />}
         <div className="App-top">
-          {/* <p className='App-subheader'>Browse a specific topic</p> */}
           <div className="App-top-inputs">
             <input className='App-search' type='text' placeholder='Search for news...' value={searchTerm} onChange={onSearchTermChanged} onKeyDown={onSearchTermKeyDown} />
             <SourceModal
