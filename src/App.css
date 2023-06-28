@@ -107,7 +107,7 @@
 }
 
 .modal-main {
-  margin-top: -2rem;
+  margin-top: -.5rem;
   max-height: 90vh;
   z-index: 100;
   width: 100%;
@@ -116,9 +116,8 @@
   align-items: center;
   position: relative;
   overflow-y: scroll;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-  /* margin-bottom: 5rem; */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .modal-main::-webkit-scrollbar {
@@ -143,7 +142,7 @@
 .close-button {
   position: fixed;
   right: 5px;
-  top: 5px;
+  top: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
