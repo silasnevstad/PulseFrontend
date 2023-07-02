@@ -7,6 +7,7 @@ import SourceModal from './components/SourceModal';
 import SignUpModal from './components/SignUpModal';
 import AccountModal from './components/AccountModal';
 import ToggleButton from './components/ToggleButton';
+import WeatherReport from './components/WeatherReport';
 import Api from './components/Api';
 import { onAuthStateChanged, auth, getApiKey, addApiKey, signIn, signUp, signOut, getSources } from './components/firebase';
 import { sortByCategory, getFormattedDate } from './components/utils';
@@ -34,7 +35,7 @@ function App() {
   const [mostRecentNews, setMostRecentNews] = useState([]);
   const [update, setUpdate] = useState([]);
   const [summary, setSummary] = useState('');
-  const [toggleMode, setToggleMode] = useState(true);
+  const [toggleMode, setToggleMode] = useState(false);
   const { getUpdate, getSourcesUpdate, getTopicUpdate, getSearchTermUpdate, getArticleSummary } = Api(mostRecentNews, setMostRecentNews, setCurrentNewsItem, userApiKey, selectedSources);
 
   const fetchUpdate = async () => {
@@ -97,7 +98,6 @@ function App() {
           const firebaseResponse = await getSources(user.uid);
           if (firebaseResponse.success) {
             setSelectedSources(firebaseResponse.sources);
-            console.log(firebaseResponse.sources);
           }
         }
       });
@@ -219,6 +219,7 @@ function App() {
         {isModalOpen && <div className="overlay"></div>}
         {isLoading && 
           <div className="loading"> 
+            <div className="loading-text">Loading...</div>
             <svg width="64px" height="48px">
               <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="back" style={{stroke: getDarkerBackground(currentCategory)}} />
               <polyline points="0.157 23.954, 14 23.954, 21.843 48, 43 0, 50 24, 64 24" id="front" style={{stroke: getBackground(currentCategory)}} />
@@ -250,6 +251,7 @@ function App() {
             />
           </div>
           <NewsButtons onTopicClicked={onTopicClicked} isLoading={isLoading} fetchUpdate={fetchUpdate} setCurrentCategory={setCurrentCategory} currentCategory={currentCategory} />
+          
         </div>
         <div className='App-news'>
           <div className='App-date'>
@@ -257,6 +259,7 @@ function App() {
             <ToggleButton handleToggleMode={handleToggleMode} toggleMode={toggleMode} />
           </div>
           <div className='App-paragraph'>
+            <WeatherReport />
             {update && sortByCategory(update).map((item, index) => {
               return <NewsItem key={index} item={item} onClick={onNewsItemClicked} toggleMode={toggleMode} disabled={isLoading} />
             })}

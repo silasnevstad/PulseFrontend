@@ -5,11 +5,14 @@ export const background_colors = {
     "all": "#FF5E5B",
     "general": "#FF5E5B",
     "world news": "#FF5E5B",
+    "tragedy": "#FF5E5B",
+    "accidents": "#FF5E5B",
     "health": "#FEC8FF",
     "science": "#D2FFD2",
     "technology": "#67B3EE",
     "politics": "#F9C784",
     "sports": "#FF9A5B",
+    "sport": "#FF9A5B",
     "environment": "#6EEB83",
     "tech": "#67B3EE",
     "entertainment": "#E0A9FB",
@@ -157,6 +160,7 @@ export const background_colors = {
     "affirmative action": "#F9C784",
     "global affairs": "#FF5E5B",
     "parenting": "#FFD2FF",
+    "food": "#FFD2FF",
 }
 
 export const ALL_SOURCES = [
