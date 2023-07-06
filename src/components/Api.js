@@ -116,23 +116,26 @@ const convertArticleToSummaryMessages = (article) => {
 }
 
 const cleanTitle = (title) => {
-    let titleParts = title.split('-');
+    let titleParts = title.split(' - ');
+    // If there is a ' - ' in the title, pop the last part assumed to be the source name
     if (titleParts.length > 1) {
         titleParts.pop();
     }
 
-    return titleParts.join('-').trim();
+    return titleParts.join(' - ').trim();
 }
 
 const makeNewsItems = (news, recentNews) => {
-    // clean titles
+    // clean titles right when we get the news
+    recentNews.forEach(item => item.title = cleanTitle(item.title));
+
     let recentNewsMap = new Map();
-    recentNews.forEach(item => recentNewsMap.set(cleanTitle(item.title), item));
+    recentNews.forEach(item => recentNewsMap.set(item.title, item));
 
     let newsItems = news.map(item => {
-        if (recentNewsMap.has(cleanTitle(item.title))) {
-            let recentItem = recentNewsMap.get(cleanTitle(item.title));
-            return {category: item.category, url: item.url, title: cleanTitle(recentNewsMap.title), content: recentItem.description };
+        if (recentNewsMap.has(item.title)) {
+            let recentItem = recentNewsMap.get(item.title);
+            return {category: item.category, url: item.url, title: recentItem.title, content: recentItem.description };
         }
     }).filter(Boolean); // remove undefined items
     return newsItems;
