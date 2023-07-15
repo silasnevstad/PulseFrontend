@@ -79,13 +79,11 @@ const requestFunctionGPT = async (messages, model, recentNews) => {
 
         if (response_message === "function_call") {
             const functionToUse = response.data.choices[0].message?.function_call;
-            console.log(response.data.choices[0])
             if (functionToUse.name === 'make_news') {
                 const args = JSON.parse(functionToUse.arguments);
                 const newsDict = args.news.map(item => {
                     return {category: item[0], title: item[1]};
                 });
-                console.log(newsDict);
                 dataToReturn = makeNewsItems(newsDict, recentNews);
             }
             return dataToReturn;
