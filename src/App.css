@@ -678,6 +678,7 @@
   background-color: #282c34;
   padding: 1rem;
   border-radius: 20px;
+  z-index: 100;
 }
 
 .loading-text {

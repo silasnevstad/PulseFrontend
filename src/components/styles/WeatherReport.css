@@ -5,6 +5,7 @@
     background-color: #333;
     color: #fff;
     border-radius: 10px;
+    z-index: 1;
 }
 
 .left-side, .right-side {
@@ -83,11 +84,8 @@
     position: relative;
     padding: 0px 15px;
     margin: 0;
+    z-index: 1;
     box-shadow: rgba(0, 0, 3, 0.1) 0px 30px 50px -12px inset, rgba(0, 0, 0, 0.1) 0px 18px 26px -18px inset, rgba(0, 0, 0, 0.2) 0px -2px 6px 0px inset;
-}
-
-.hour-card:hover {
-    background-color: #333;
 }
 
 .hour {
